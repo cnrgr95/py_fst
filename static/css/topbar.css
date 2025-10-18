@@ -2,7 +2,7 @@
 .topbar {
     position: fixed;
     top: 0;
-    left: var(--sidebar-width);
+    left: var(--sidebar-collapsed-width);
     right: 0;
     height: var(--topbar-height);
     background-color: var(--sidebar-bg);
@@ -16,15 +16,55 @@
     transition: all 0.3s ease;
 }
 
-/* Topbar when sidebar is collapsed */
-.sidebar.collapsed + .topbar {
-    left: var(--sidebar-collapsed-width);
+/* Topbar when sidebar is hovered */
+.sidebar:hover ~ .topbar {
+    left: var(--sidebar-width);
+}
+
+/* Topbar when sidebar is locked */
+.sidebar.locked ~ .topbar {
+    left: var(--sidebar-width);
 }
 
 .topbar-left {
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+.topbar-center {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+}
+
+.topbar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.topbar-logo-img {
+    height: 32px;
+    width: auto;
+    max-width: 100%;
+}
+
+.sidebar-collapse-toggle {
+    background: none;
+    border: none;
+    color: var(--sidebar-text, #495057);
+    font-size: 1.1rem;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sidebar-collapse-toggle:hover {
+    background-color: var(--sidebar-hover, #f8f9fc);
+    color: var(--sidebar-active, #4e73df);
 }
 
 .topbar-right {
@@ -152,8 +192,18 @@
 /* Responsive Design */
 @media (max-width: 991.98px) {
     .topbar {
-        left: 0;
+        left: 0 !important;
         margin-left: 0;
+    }
+    
+    .topbar-center {
+        display: flex;
+    }
+    
+    /* Prevent topbar from shifting when sidebar expands */
+    .sidebar:hover ~ .topbar,
+    .sidebar.locked ~ .topbar {
+        left: 0 !important;
     }
 }
 
@@ -163,6 +213,10 @@
     }
     
     .topbar-title {
+        display: none;
+    }
+    
+    .topbar-center {
         display: none;
     }
     
