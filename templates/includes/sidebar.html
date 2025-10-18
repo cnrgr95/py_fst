@@ -1,20 +1,20 @@
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="sidebar-brand">
-                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="sidebar-logo">
-            </div>
-            <div class="sidebar-header-buttons">
-                <button class="sidebar-lock-toggle d-none d-lg-block" id="sidebarLockToggle" title="Pin Sidebar Open">
-                    <i class="fas fa-unlock-alt"></i>
-                    <i class="fas fa-lock" style="display: none;"></i>
-                </button>
-                <button class="sidebar-toggle d-lg-none" id="sidebarToggleClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="sidebar-logo">
         </div>
-    
+        <div class="sidebar-header-buttons">
+            <button class="sidebar-lock-toggle d-none d-lg-block" id="sidebarLockToggle" aria-pressed="false" aria-label="Pin sidebar open" title="Pin Sidebar Open">
+                <i class="fas fa-unlock-alt"></i>
+                <i class="fas fa-lock" style="display: none;"></i>
+            </button>
+            <button class="sidebar-toggle d-lg-none" id="sidebarToggleClose" aria-label="Close sidebar">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
     <div class="sidebar-menu">
         <ul class="nav nav-pills flex-column">
             <!-- Dashboard -->
@@ -22,7 +22,6 @@
                 <a class="nav-link {{ 'active' if request.endpoint == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}">
                     <i class="fas fa-tachometer-alt"></i>
                     <span>{{ translations.dashboard or 'Dashboard' }}</span>
-                    <div class="sidebar-tooltip">{{ translations.dashboard or 'Dashboard' }}</div>
                 </a>
             </li>
 
@@ -31,19 +30,17 @@
 
             <!-- Cost -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="javascript:void(0)">
                     <i class="fas fa-calculator"></i>
                     <span>{{ translations.cost_calculation or 'Cost' }}</span>
-                    <div class="sidebar-tooltip">{{ translations.cost_calculation or 'Cost' }}</div>
                 </a>
             </li>
 
             <!-- Tour -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="javascript:void(0)">
                     <i class="fas fa-route"></i>
                     <span>{{ translations.projects or 'Tour' }}</span>
-                    <div class="sidebar-tooltip">{{ translations.projects or 'Tour' }}</div>
                 </a>
             </li>
 
@@ -52,40 +49,35 @@
 
             <!-- Definitions -->
             <li class="nav-item">
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#definitionsCollapse" aria-expanded="false">
+                <a class="nav-link" href="javascript:void(0)" data-toggle="collapse" data-target="#definitionsCollapse" aria-controls="definitionsCollapse" aria-expanded="false">
                     <i class="fas fa-cogs"></i>
                     <span>{{ translations.definitions or 'Definitions' }}</span>
                     <i class="fas fa-chevron-down ms-auto"></i>
-                    <div class="sidebar-tooltip">{{ translations.definitions or 'Definitions' }}</div>
                 </a>
                 <div class="collapse" id="definitionsCollapse">
                     <ul class="nav nav-pills flex-column sub-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0)">
                                 <i class="fas fa-users"></i>
                                 <span>{{ translations.users or 'Users' }}</span>
-                                <div class="sidebar-tooltip">{{ translations.users or 'Users' }}</div>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0)">
                                 <i class="fas fa-money-bill"></i>
                                 <span>{{ translations.cost_def or 'Cost' }}</span>
-                                <div class="sidebar-tooltip">{{ translations.cost_def or 'Cost' }}</div>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0)">
                                 <i class="fas fa-route"></i>
                                 <span>{{ translations.tour_def or 'Tour' }}</span>
-                                <div class="sidebar-tooltip">{{ translations.tour_def or 'Tour' }}</div>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0)">
                                 <i class="fas fa-globe"></i>
                                 <span>{{ translations.language_def or 'Language' }}</span>
-                                <div class="sidebar-tooltip">{{ translations.language_def or 'Language' }}</div>
                             </a>
                         </li>
                     </ul>
@@ -94,35 +86,31 @@
 
             <!-- Reports -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="javascript:void(0)">
                     <i class="fas fa-chart-bar"></i>
                     <span>{{ translations.reports or 'Reports' }}</span>
-                    <div class="sidebar-tooltip">{{ translations.reports or 'Reports' }}</div>
                 </a>
             </li>
 
             <!-- Settings -->
             <li class="nav-item">
-                <a class="nav-link" href="#" data-bs-toggle="collapse" data-bs-target="#settingsCollapse" aria-expanded="false">
+                <a class="nav-link" href="javascript:void(0)" data-toggle="collapse" data-target="#settingsCollapse" aria-controls="settingsCollapse" aria-expanded="false">
                     <i class="fas fa-cog"></i>
                     <span>{{ translations.settings or 'Settings' }}</span>
                     <i class="fas fa-chevron-down ms-auto"></i>
-                    <div class="sidebar-tooltip">{{ translations.settings or 'Settings' }}</div>
                 </a>
                 <div class="collapse" id="settingsCollapse">
                     <ul class="nav nav-pills flex-column sub-menu">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0)">
                                 <i class="fas fa-server"></i>
                                 <span>{{ translations.system_settings or 'System Settings' }}</span>
-                                <div class="sidebar-tooltip">{{ translations.system_settings or 'System Settings' }}</div>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">
+                            <a class="nav-link" href="javascript:void(0)">
                                 <i class="fas fa-coins"></i>
                                 <span>{{ translations.cash_settings or 'Cash Settings' }}</span>
-                                <div class="sidebar-tooltip">{{ translations.cash_settings or 'Cash Settings' }}</div>
                             </a>
                         </li>
                     </ul>
@@ -134,28 +122,27 @@
 
             <!-- Support -->
             <li class="nav-item">
-                <a class="nav-link" href="#">
+                <a class="nav-link" href="javascript:void(0)">
                     <i class="fas fa-life-ring"></i>
                     <span>{{ translations.support or 'Support' }}</span>
-                    <div class="sidebar-tooltip">{{ translations.support or 'Support' }}</div>
                 </a>
             </li>
         </ul>
     </div>
 
-        <!-- Sidebar Footer -->
-        <div class="sidebar-footer">
-            <div class="sidebar-footer-content">
-                <div class="sidebar-footer-text-wide">
-                    <span class="sidebar-footer-title">FST</span>
-                    <span class="sidebar-footer-version">v1.0.0</span>
-                </div>
-                <div class="sidebar-footer-text-narrow">
-                    <div class="sidebar-footer-title">FST</div>
-                    <div class="sidebar-footer-version">v1.0.0</div>
-                </div>
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+        <div class="sidebar-footer-content">
+            <div class="sidebar-footer-text-wide">
+                <span class="sidebar-footer-title">FST</span>
+                <span class="sidebar-footer-version">v1.0.0</span>
+            </div>
+            <div class="sidebar-footer-text-narrow">
+                <div class="sidebar-footer-title">FST</div>
+                <div class="sidebar-footer-version">v1.0.0</div>
             </div>
         </div>
+    </div>
 </div>
 
 <!-- Sidebar Overlay (Mobile) -->

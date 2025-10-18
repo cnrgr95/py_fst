@@ -7,8 +7,9 @@
     height: var(--topbar-height);
     background-color: var(--sidebar-bg);
     border-bottom: 1px solid var(--sidebar-border);
+    border-left: 1px solid var(--sidebar-border);
     box-shadow: var(--sidebar-shadow);
-    z-index: 999;
+    z-index: 1001;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -123,6 +124,10 @@
 }
 
 /* Language Dropdown */
+.language-dropdown {
+    position: relative;
+}
+
 .language-dropdown .dropdown-toggle {
     border: 1px solid var(--sidebar-border);
     color: var(--sidebar-text);
@@ -141,6 +146,11 @@
     background-color: var(--sidebar-bg);
     box-shadow: var(--sidebar-shadow);
     min-width: 150px;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    transform: translateY(0);
 }
 
 .language-dropdown .dropdown-item {
@@ -154,6 +164,10 @@
 }
 
 /* User Dropdown */
+.user-dropdown {
+    position: relative;
+}
+
 .user-dropdown .dropdown-toggle {
     border: 1px solid var(--sidebar-active);
     color: var(--sidebar-active);
@@ -171,6 +185,11 @@
     background-color: var(--sidebar-bg);
     box-shadow: var(--sidebar-shadow);
     min-width: 200px;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 1000;
+    transform: translateY(0);
 }
 
 .user-dropdown .dropdown-item {
@@ -193,7 +212,6 @@
 @media (max-width: 991.98px) {
     .topbar {
         left: 0 !important;
-        margin-left: 0;
     }
     
     .topbar-center {
@@ -263,6 +281,13 @@
 /* Dropdown animations */
 .dropdown-menu {
     animation: fadeInDown 0.2s ease;
+}
+
+/* Fix dropdown positioning issues */
+.dropdown-menu.show {
+    position: absolute !important;
+    transform: translateY(0) !important;
+    top: 100% !important;
 }
 
 @keyframes fadeInDown {

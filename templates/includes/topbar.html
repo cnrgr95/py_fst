@@ -1,7 +1,7 @@
 <!-- Topbar -->
 <nav class="topbar">
             <div class="topbar-left">
-                <button class="sidebar-toggle d-lg-none" id="sidebarToggleMobile">
+                <button class="sidebar-toggle d-lg-none" id="sidebarToggleMobile" aria-label="Open sidebar">
                     <i class="fas fa-bars"></i>
                 </button>
             </div>
@@ -15,7 +15,7 @@
     <div class="topbar-right">
         <!-- Theme Toggle -->
         <div class="theme-toggle">
-            <button class="btn btn-outline-secondary btn-sm" id="themeToggle" title="{{ translations.dark_mode or 'Dark Mode' }}">
+            <button class="btn btn-outline-secondary btn-sm" id="themeToggle" title="{{ translations.dark_mode or 'Dark Mode' }}" aria-label="{{ translations.dark_mode or 'Toggle dark mode' }}">
                 <i class="fas fa-moon"></i>
             </button>
         </div>
@@ -23,7 +23,7 @@
         <!-- Language Dropdown -->
         <div class="language-dropdown">
             <div class="dropdown">
-                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ translations.language or 'Select language' }}">
                     <i class="fas fa-globe"></i>
                     <span class="d-none d-sm-inline">{{ translations.language or 'Language' }}</span>
                 </button>
@@ -45,7 +45,7 @@
         <!-- User Dropdown -->
         <div class="user-dropdown">
             <div class="dropdown">
-                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="{{ translations.user_menu or 'User menu' }}">
                     <i class="fas fa-user-circle"></i>
                     <span class="d-none d-sm-inline">{{ session.full_name or session.username or 'User' }}</span>
                 </button>
