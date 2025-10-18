@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 bg-light sidebar">
+            <div class="position-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-tachometer-alt me-2"></i>
+                            {{ translations.dashboard or 'Dashboard' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-project-diagram me-2"></i>
+                            {{ translations.projects or 'Projects' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-boxes me-2"></i>
+                            {{ translations.materials or 'Materials' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-users me-2"></i>
+                            {{ translations.labor or 'Labor' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-tools me-2"></i>
+                            {{ translations.equipment or 'Equipment' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-chart-bar me-2"></i>
+                            {{ translations.reports or 'Reports' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-cog me-2"></i>
+                            {{ translations.settings or 'Settings' }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="fas fa-user-cog me-2"></i>
+                            {{ translations.users or 'Users' }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9 col-lg-10 ms-sm-auto px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{ translations.dashboard or 'Dashboard' }}</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                    <div class="btn-group me-2">
+                        <button type="button" class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download me-1"></i>
+                            {{ translations.reports or 'Reports' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Welcome Message -->
+            <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">
+                    <i class="fas fa-hand-wave me-2"></i>
+                    {{ translations.welcome or 'Welcome' }}, {{ session.full_name }}!
+                </h4>
+                <p>{{ translations.cost_calculation or 'Cost Calculation' }} sistemine hoş geldiniz. Projelerinizi yönetmek ve maliyet hesaplamalarınızı yapmak için soldaki menüyü kullanabilirsiniz.</p>
+            </div>
+
+            <!-- Dashboard Cards -->
+            <div class="row">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        {{ translations.projects or 'Projects' }}
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-project-diagram fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        {{ translations.materials or 'Materials' }}
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-boxes fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        {{ translations.labor or 'Labor' }}
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        {{ translations.equipment or 'Equipment' }}
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-tools fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-history me-2"></i>
+                                Recent Activity
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted">No recent activity to display.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-info-circle me-2"></i>
+                                System Info
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="text-center">
+                                <i class="fas fa-calculator fa-3x text-primary mb-3"></i>
+                                <h5>{{ translations.app_title or 'Cost Calculation System' }}</h5>
+                                <p class="text-muted">Version 1.0.0</p>
+                                <p class="small text-muted">
+                                    {{ translations.welcome or 'Welcome' }} to the cost calculation system. 
+                                    Start by creating your first project.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
