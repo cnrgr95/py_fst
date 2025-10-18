@@ -85,7 +85,7 @@
     display: none;
 }
 
-/* Locked sidebar dropdown behavior */
+/* Locked sidebar dropdown behavior with smooth transition */
 .sidebar.locked .collapse {
     position: static;
     opacity: 1;
@@ -99,6 +99,7 @@
     top: auto;
     transform: none;
     padding: 0;
+    transition: all 0.3s ease;
 }
 
 /* Hover state styles */
@@ -395,7 +396,7 @@
     margin: 0.1rem 0.3rem;
     border-radius: 0.2rem;
     font-size: 0.9rem;
-    transition: background-color 0.1s ease;
+    transition: all 0.2s ease;
     white-space: nowrap;
 }
 
@@ -403,7 +404,7 @@
     background-color: var(--sidebar-hover);
 }
 
-/* When sidebar is hovered, collapse uses normal flow */
+/* When sidebar is hovered, collapse uses normal flow with smooth transition */
 .sidebar:hover .collapse {
     position: static;
     opacity: 1;
@@ -417,6 +418,7 @@
     top: auto;
     transform: none;
     padding: 0;
+    transition: all 0.3s ease;
 }
 
 

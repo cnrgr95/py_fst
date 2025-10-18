@@ -56,6 +56,31 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Update aria-pressed attribute
             this.setAttribute('aria-pressed', isLocked.toString());
+            
+            // Handle dropdown transitions during lock toggle
+            handleDropdownTransitions(isLocked);
+        });
+    }
+    
+    // Dropdown transition handler function
+    function handleDropdownTransitions(isLocked) {
+        const collapseTriggers = document.querySelectorAll('[data-toggle="collapse"]');
+        
+        collapseTriggers.forEach(trigger => {
+            const targetId = trigger.getAttribute('data-target');
+            const target = document.querySelector(targetId);
+            
+            if (target) {
+                const isExpanded = target.classList.contains('show');
+                
+                if (isLocked && isExpanded) {
+                    // When locking, ensure dropdowns stay open and visible
+                    target.style.transition = 'all 0.3s ease';
+                } else if (!isLocked && isExpanded) {
+                    // When unlocking, prepare for absolute positioning
+                    target.style.transition = 'all 0.3s ease';
+                }
+            }
         });
     }
     
@@ -67,6 +92,8 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebarLockToggle.classList.add('locked');
             sidebarLockToggle.setAttribute('aria-pressed', 'true');
         }
+        // Handle dropdown transitions on page load
+        handleDropdownTransitions(true);
     }
     
     // Close sidebar when clicking overlay
@@ -234,6 +261,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
+        }
+    });
+    
+    // Handle dropdown transitions during hover
+    sidebar.addEventListener('mouseenter', function() {
+        if (!sidebar.classList.contains('locked')) {
+            handleDropdownTransitions(false);
+        }
+    });
+    
+    sidebar.addEventListener('mouseleave', function() {
+        if (!sidebar.classList.contains('locked')) {
+            // Close any open dropdowns when leaving sidebar (unless locked)
+            const collapseTriggers = document.querySelectorAll('[data-toggle="collapse"]');
+            collapseTriggers.forEach(trigger => {
+                const targetId = trigger.getAttribute('data-target');
+                const target = document.querySelector(targetId);
+                if (target && target.classList.contains('show')) {
+                    target.classList.remove('show');
+                    trigger.setAttribute('aria-expanded', 'false');
+                    // Reset chevron rotation
+                    const chevron = trigger.querySelector('.fa-chevron-down');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                }
+            });
         }
     });
     
