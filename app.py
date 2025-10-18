@@ -89,12 +89,19 @@ def inject_translations():
 
 @app.route('/')
 def index():
-    """Ana sayfa - login sayfasına yönlendir"""
-    return redirect(url_for('login'))
+    """Ana sayfa - giriş durumuna göre yönlendir"""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    else:
+        return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """Login sayfası"""
+    # Eğer kullanıcı zaten giriş yapmışsa dashboard'a yönlendir
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
@@ -168,7 +175,12 @@ def change_language(lang):
     """Dil değiştir"""
     if lang in ['en', 'tr']:
         session['language'] = lang
-    return redirect(request.referrer or url_for('login'))
+    
+    # Giriş durumuna göre yönlendir
+    if 'user_id' in session:
+        return redirect(request.referrer or url_for('dashboard'))
+    else:
+        return redirect(request.referrer or url_for('login'))
 
 if __name__ == '__main__':
     # Veritabanını başlat

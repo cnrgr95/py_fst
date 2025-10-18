@@ -17,9 +17,13 @@
 }
 
 .login-logo {
-    font-size: 3rem;
-    color: #4e73df;
     margin-bottom: 1rem;
+}
+
+.login-logo-img {
+    height: 60px;
+    width: auto;
+    max-width: 100%;
 }
 
 .login-title {

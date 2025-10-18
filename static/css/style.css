@@ -109,7 +109,13 @@ body {
     
     .main-content {
         margin-left: 0 !important;
+        margin-top: 0 !important;
     }
+}
+
+/* Main content top margin for topbar */
+.main-content {
+    margin-top: var(--topbar-height, 60px);
 }
 
 /* Custom utilities */

@@ -1,0 +1,68 @@
+<!-- Topbar -->
+<nav class="topbar">
+    <div class="topbar-left">
+        <button class="sidebar-toggle d-lg-none" id="sidebarToggleMobile">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <div class="topbar-right">
+        <!-- Theme Toggle -->
+        <div class="theme-toggle">
+            <button class="btn btn-outline-secondary btn-sm" id="themeToggle" title="{{ translations.dark_mode or 'Dark Mode' }}">
+                <i class="fas fa-moon"></i>
+            </button>
+        </div>
+
+        <!-- Language Dropdown -->
+        <div class="language-dropdown">
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-globe"></i>
+                    <span class="d-none d-sm-inline">{{ translations.language or 'Language' }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('change_language', lang='en') }}">
+                            <i class="fas fa-flag-usa me-2"></i>{{ translations.english or 'English' }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('change_language', lang='tr') }}">
+                            <i class="fas fa-flag me-2"></i>{{ translations.turkish or 'Turkish' }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- User Dropdown -->
+        <div class="user-dropdown">
+            <div class="dropdown">
+                <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-user-circle"></i>
+                    <span class="d-none d-sm-inline">{{ session.full_name or session.username or 'User' }}</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <h6 class="dropdown-header">
+                            <i class="fas fa-user me-2"></i>{{ translations.user_info or 'User Information' }}
+                        </h6>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="#">
+                            <i class="fas fa-user me-2"></i>{{ translations.profile or 'Profile' }}
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item" href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt me-2"></i>{{ translations.logout or 'Logout' }}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
