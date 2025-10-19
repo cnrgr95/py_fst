@@ -170,6 +170,20 @@
     transform: translateY(0);
 }
 
+/* Responsive dil dropdown */
+@media (max-width: 991.98px) {
+    .language-dropdown .dropdown-menu {
+        position: fixed;
+        top: auto;
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        width: auto;
+        min-width: 120px;
+        max-width: 200px;
+    }
+}
+
 .language-dropdown .dropdown-item {
     color: var(--sidebar-text);
     padding: 0.5rem 1rem;

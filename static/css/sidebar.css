@@ -1,3 +1,42 @@
+/* Mobile Sidebar Toggle Button */
+.sidebar-toggle-mobile {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1020; /* Lower than sidebar */
+    background: var(--sidebar-bg);
+    border: 1px solid var(--sidebar-border);
+    color: var(--sidebar-text);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--sidebar-shadow);
+    display: none; /* Hidden by default */
+}
+
+/* Show on mobile devices */
+@media (max-width: 991.98px) {
+    .sidebar-toggle-mobile {
+        display: block !important;
+    }
+    
+    /* Hide hamburger when sidebar is open */
+    .sidebar.show ~ .sidebar-toggle-mobile {
+        display: none !important;
+    }
+}
+
+.sidebar-toggle-mobile:hover {
+    background: var(--sidebar-hover);
+    color: var(--sidebar-active);
+}
+
+.sidebar-toggle-mobile:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--sidebar-active);
+}
+
 /* Sidebar Styles */
 :root {
     --sidebar-width: 280px;
@@ -32,7 +71,7 @@
     background-color: var(--sidebar-bg);
     border-right: 1px solid var(--sidebar-border);
     box-shadow: var(--sidebar-shadow);
-    z-index: 1000;
+    z-index: 1050;
     transition: width 0.3s ease;
     overflow-y: auto;
 }
@@ -548,6 +587,13 @@
     transition: all 0.3s ease;
     display: none;
     cursor: pointer;
+}
+
+/* Show overlay on mobile devices */
+@media (max-width: 991.98px) {
+    .sidebar-overlay {
+        display: block;
+    }
 }
 
 .sidebar-overlay.show {

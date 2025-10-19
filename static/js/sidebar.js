@@ -30,9 +30,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Mobile sidebar toggle
     if (sidebarToggleMobile) {
-        sidebarToggleMobile.addEventListener('click', function() {
+        sidebarToggleMobile.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Mobile toggle clicked');
             toggleSidebar();
         });
+    } else {
+        console.log('Mobile toggle button not found');
     }
     
     // Close sidebar button
@@ -380,7 +384,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Native scroll behavior - wheel override removed
     
     // Clean dropdown behavior when sidebar transitions
-    const sidebar = document.getElementById('sidebar');
     
     // Close all dropdowns cleanly when sidebar is not hovered or locked
     function closeAllDropdownsCleanly() {
