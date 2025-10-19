@@ -126,12 +126,78 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Fullscreen toggle functionality
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    if (fullscreenToggle) {
+        fullscreenToggle.addEventListener('click', function() {
+            toggleFullscreen();
+        });
+    }
+    
+    // Listen for fullscreen changes to update button icon
+    document.addEventListener('fullscreenchange', updateFullscreenButton);
+    document.addEventListener('webkitfullscreenchange', updateFullscreenButton);
+    document.addEventListener('mozfullscreenchange', updateFullscreenButton);
+    document.addEventListener('MSFullscreenChange', updateFullscreenButton);
 });
 
 // Chart initialization function
 function initializeCharts() {
     // Dashboard charts will be initialized here
     console.log('Charts initialized');
+}
+
+// Fullscreen toggle functions
+function toggleFullscreen() {
+    if (!document.fullscreenElement && 
+        !document.webkitFullscreenElement && 
+        !document.mozFullScreenElement && 
+        !document.msFullscreenElement) {
+        // Enter fullscreen
+        if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+        } else if (document.documentElement.webkitRequestFullscreen) {
+            document.documentElement.webkitRequestFullscreen();
+        } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+        } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+        }
+    } else {
+        // Exit fullscreen
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+}
+
+// Update fullscreen button icon based on current state
+function updateFullscreenButton() {
+    const fullscreenToggle = document.getElementById('fullscreenToggle');
+    if (!fullscreenToggle) return;
+    
+    const icon = fullscreenToggle.querySelector('i');
+    if (!icon) return;
+    
+    if (document.fullscreenElement || 
+        document.webkitFullscreenElement || 
+        document.mozFullScreenElement || 
+        document.msFullscreenElement) {
+        // Currently in fullscreen
+        icon.className = 'fas fa-compress';
+        fullscreenToggle.title = 'Exit Fullscreen';
+    } else {
+        // Not in fullscreen
+        icon.className = 'fas fa-expand';
+        fullscreenToggle.title = 'Toggle Fullscreen';
+    }
 }
 
 // Utility functions

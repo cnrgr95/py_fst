@@ -12,7 +12,7 @@ import sys
 # Veritabanı konfigürasyonu
 DB_CONFIG = {
     'host': 'localhost',
-    'database': 'postgres',
+    'database': 'py_fst',
     'user': 'postgres',
     'password': '123456789'
 }
