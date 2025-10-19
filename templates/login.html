@@ -158,6 +158,7 @@
 
                     <!-- Login Form -->
                     <form method="POST" class="login-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <div class="mb-3">
                             <label for="username" class="form-label">
                                 <i class="fas fa-user me-2"></i>Username
