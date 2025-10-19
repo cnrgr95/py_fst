@@ -84,6 +84,24 @@ def init_database():
         print(f"PostgreSQL başlatma hatası: {e}")
         return False
 
+def load_translations(lang='en'):
+    """Çeviri dosyalarını yükler"""
+    try:
+        with open(f'translations/{lang}.json', 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Fallback olarak İngilizce yükle
+        try:
+            with open('translations/en.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {}
+
+@app.context_processor
+def inject_translations():
+    """Tüm template'lere çevirileri enjekte eder"""
+    lang = session.get('language', 'en')
+    return dict(translations=load_translations(lang))
 
 @app.route('/')
 def index():
@@ -130,6 +148,7 @@ def login():
                 session['user_id'] = user['id']
                 session['username'] = user['username']
                 session['full_name'] = user['full_name']
+                session['language'] = user.get('language', 'en')
                 
                 # Beni Hatırla özelliği
                 remember_me = request.form.get('remember_me')
@@ -162,6 +181,48 @@ def dashboard():
         return redirect(url_for('login'))
     
     return render_template('dashboard.html')
+
+@app.route('/users')
+def users():
+    """Kullanıcı yönetimi sayfası"""
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # Veritabanından kullanıcıları getir
+    conn = get_db_connection()
+    if not conn:
+        flash('Database connection error!', 'error')
+        return render_template('definitions/user.html', users=[])
+    
+    try:
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT id, username, email, full_name, is_active, created_at, last_login
+            FROM users
+            ORDER BY created_at DESC
+        """)
+        users = cur.fetchall()
+        cur.close()
+        conn.close()
+        
+        return render_template('definitions/user.html', users=users)
+        
+    except psycopg2.Error as e:
+        flash('Error loading users!', 'error')
+        print(f"Users loading error: {e}")
+        return render_template('definitions/user.html', users=[])
+
+@app.route('/change_language/<lang>')
+def change_language(lang):
+    """Dil değiştir"""
+    if lang in ['en', 'tr']:
+        session['language'] = lang
+    
+    # Giriş durumuna göre yönlendir
+    if 'user_id' in session:
+        return redirect(request.referrer or url_for('dashboard'))
+    else:
+        return redirect(request.referrer or url_for('login'))
 
 
 if __name__ == '__main__':

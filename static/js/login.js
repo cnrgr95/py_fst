@@ -258,3 +258,12 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Language change function
+function changeLanguage() {
+    const languageSelect = document.getElementById('language_select');
+    if (languageSelect) {
+        const selectedLang = languageSelect.value;
+        window.location.href = `/change_language/${selectedLang}`;
+    }
+}

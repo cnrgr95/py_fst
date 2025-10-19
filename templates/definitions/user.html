@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- User Management CSS -->
+<link href="{{ url_for('static', filename='css/definitions/user.css') }}" rel="stylesheet">
+<div class="container-fluid px-4">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">{{ translations.user_management or 'User Management' }}</h1>
+        <div class="btn-toolbar mb-2 mb-md-0">
+            <div class="btn-group me-2">
+                <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#userModal">
+                    <i class="fas fa-plus me-1"></i>
+                    {{ translations.add_user or 'Add User' }}
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User List Table -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">
+                <i class="fas fa-users me-2"></i>
+                {{ translations.users_list or 'Users List' }}
+            </h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>{{ translations.id or 'ID' }}</th>
+                            <th>{{ translations.username or 'Username' }}</th>
+                            <th>{{ translations.email or 'Email' }}</th>
+                            <th>{{ translations.full_name or 'Full Name' }}</th>
+                            <th>{{ translations.status or 'Status' }}</th>
+                            <th>{{ translations.created_at or 'Created At' }}</th>
+                            <th>{{ translations.last_login or 'Last Login' }}</th>
+                            <th>{{ translations.actions or 'Actions' }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if users %}
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.full_name }}</td>
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="badge bg-success">{{ translations.active or 'Active' }}</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ translations.inactive or 'Inactive' }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') if user.created_at else '-' }}</td>
+                                <td>{{ user.last_login.strftime('%Y-%m-%d %H:%M:%S') if user.last_login else (translations.never or 'Never') }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser('{{ user.id }}')">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('{{ user.id }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted">{{ translations.no_users_found or 'No users found' }}</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userModalLabel">{{ translations.add_new_user or 'Add New User' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="userForm">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">{{ translations.username or 'Username' }}</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">{{ translations.email or 'Email' }}</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">{{ translations.full_name or 'Full Name' }}</label>
+                        <input type="text" class="form-control" id="fullName" name="full_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">{{ translations.password or 'Password' }}</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="confirmPassword" class="form-label">{{ translations.confirm_password or 'Confirm Password' }}</label>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirm_password" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="isActive" name="is_active" checked>
+                            <label class="form-check-label" for="isActive">
+                                {{ translations.active_user or 'Active User' }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ translations.cancel or 'Cancel' }}</button>
+                    <button type="submit" class="btn btn-primary">{{ translations.save_user or 'Save User' }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editUserModalLabel">{{ translations.edit_user or 'Edit User' }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId" name="user_id">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="editUsername" class="form-label">{{ translations.username or 'Username' }}</label>
+                        <input type="text" class="form-control" id="editUsername" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">{{ translations.email or 'Email' }}</label>
+                        <input type="email" class="form-control" id="editEmail" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editFullName" class="form-label">{{ translations.full_name or 'Full Name' }}</label>
+                        <input type="text" class="form-control" id="editFullName" name="full_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="editPassword" class="form-label">{{ translations.new_password or 'New Password (leave blank to keep current)' }}</label>
+                        <input type="password" class="form-control" id="editPassword" name="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="editConfirmPassword" class="form-label">{{ translations.confirm_new_password or 'Confirm New Password' }}</label>
+                        <input type="password" class="form-control" id="editConfirmPassword" name="confirm_password">
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editIsActive" name="is_active">
+                            <label class="form-check-label" for="editIsActive">
+                                {{ translations.active_user or 'Active User' }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ translations.cancel or 'Cancel' }}</button>
+                    <button type="submit" class="btn btn-primary">{{ translations.update_user or 'Update User' }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<!-- User Management JavaScript -->
+<script src="{{ url_for('static', filename='js/definitions/user.js') }}"></script>
+<script>
+// Initialize translations object for JavaScript
+window.translations = {
+    search: "{{ translations.search or 'Search' }}",
+    show_entries: "{{ translations.show_entries or 'Show _MENU_ entries' }}",
+    showing_entries: "{{ translations.showing_entries or 'Showing _START_ to _END_ of _TOTAL_ entries' }}",
+    no_entries: "{{ translations.no_entries or 'No entries found' }}",
+    filtered_entries: "{{ translations.filtered_entries or '(filtered from _MAX_ total entries)' }}",
+    first: "{{ translations.first or 'First' }}",
+    last: "{{ translations.last or 'Last' }}",
+    next: "{{ translations.next or 'Next' }}",
+    previous: "{{ translations.previous or 'Previous' }}",
+    confirm_delete: "{{ translations.confirm_delete or 'Are you sure you want to delete this user?' }}",
+    delete_not_implemented: "{{ translations.delete_not_implemented or 'Delete functionality will be implemented soon.' }}",
+    user_added: "{{ translations.user_added or 'User added successfully!' }}",
+    user_updated: "{{ translations.user_updated or 'User updated successfully!' }}",
+    loading: "{{ translations.loading or 'Loading...' }}",
+    save: "{{ translations.save or 'Save' }}",
+    username_required: "{{ translations.username_required or 'Username must be at least 3 characters long' }}",
+    email_invalid: "{{ translations.email_invalid or 'Please enter a valid email address' }}",
+    fullname_required: "{{ translations.fullname_required or 'Full name is required' }}",
+    password_min_length: "{{ translations.password_min_length or 'Password must be at least 6 characters long' }}",
+    password_mismatch: "{{ translations.password_mismatch or 'Passwords do not match' }}"
+};
+</script>
+{% endblock %}

@@ -42,6 +42,67 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
+    // Dropdown behavior - only one dropdown open at a time
+    const dropdownToggles = document.querySelectorAll('[data-bs-toggle="collapse"]');
+    
+    dropdownToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const target = document.querySelector(this.getAttribute('data-bs-target'));
+            const isCurrentlyOpen = target.classList.contains('show');
+            const isSidebarLocked = sidebar.classList.contains('locked');
+            const isSidebarHovered = sidebar.matches(':hover');
+            
+            // Only allow dropdown toggle if sidebar is hovered or locked
+            if (!isSidebarHovered && !isSidebarLocked) {
+                return;
+            }
+            
+            // Close all other dropdowns first
+            dropdownToggles.forEach(function(otherToggle) {
+                if (otherToggle !== toggle) {
+                    const otherTarget = document.querySelector(otherToggle.getAttribute('data-bs-target'));
+                    if (otherTarget && otherTarget.classList.contains('show')) {
+                        otherTarget.classList.remove('show');
+                        otherToggle.setAttribute('aria-expanded', 'false');
+                        otherToggle.classList.remove('active');
+                        
+                        // Rotate chevron back
+                        const chevron = otherToggle.querySelector('.fa-chevron-down');
+                        if (chevron) {
+                            chevron.style.transform = 'rotate(0deg)';
+                        }
+                    }
+                }
+            });
+            
+            // Toggle current dropdown
+            if (target) {
+                const chevron = this.querySelector('.fa-chevron-down');
+                
+                if (isCurrentlyOpen) {
+                    // Close current dropdown
+                    target.classList.remove('show');
+                    this.setAttribute('aria-expanded', 'false');
+                    this.classList.remove('active');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(0deg)';
+                    }
+                } else {
+                    // Open current dropdown
+                    target.classList.add('show');
+                    this.setAttribute('aria-expanded', 'true');
+                    this.classList.add('active');
+                    if (chevron) {
+                        chevron.style.transform = 'rotate(180deg)';
+                    }
+                }
+            }
+        });
+    });
+    
     // Sidebar lock toggle functionality
     const sidebarLockToggle = document.getElementById('sidebarLockToggle');
     
@@ -292,6 +353,61 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Native scroll behavior - wheel override removed
+    
+    // Clean dropdown behavior when sidebar transitions
+    const sidebar = document.getElementById('sidebar');
+    
+    // Close all dropdowns cleanly when sidebar is not hovered or locked
+    function closeAllDropdownsCleanly() {
+        dropdownToggles.forEach(function(toggle) {
+            const target = document.querySelector(toggle.getAttribute('data-bs-target'));
+            if (target && target.classList.contains('show')) {
+                target.classList.remove('show');
+                toggle.setAttribute('aria-expanded', 'false');
+                toggle.classList.remove('active');
+                
+                // Reset chevron
+                const chevron = toggle.querySelector('.fa-chevron-down');
+                if (chevron) {
+                    chevron.style.transform = 'rotate(0deg)';
+                }
+            }
+        });
+    }
+    
+    // Handle sidebar hover events for clean transitions
+    if (sidebar) {
+        let hoverTimeout;
+        
+        // Close dropdowns immediately when mouse leaves sidebar
+        sidebar.addEventListener('mouseleave', function() {
+            if (!sidebar.classList.contains('locked')) {
+                closeAllDropdownsCleanly();
+            }
+        });
+        
+        // Handle sidebar width changes for clean transitions
+        function handleSidebarTransition() {
+            if (!sidebar.classList.contains('locked')) {
+                closeAllDropdownsCleanly();
+            }
+        }
+        
+        // Listen for sidebar width changes
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && 
+                    (mutation.attributeName === 'class' || mutation.attributeName === 'style')) {
+                    handleSidebarTransition();
+                }
+            });
+        });
+        
+        observer.observe(sidebar, {
+            attributes: true,
+            attributeFilter: ['class', 'style']
+        });
+    }
     
     // Initialize tooltips for sidebar icons with Bootstrap protection
     if (window.bootstrap && bootstrap.Tooltip) {
