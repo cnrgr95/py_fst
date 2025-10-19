@@ -312,6 +312,13 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
+// Yetki yönetimi fonksiyonu
+function managePermissions(userId) {
+    // Yetki yönetimi sayfasına yönlendir
+    window.location.href = `/user_permissions/${userId}`;
+}
+
 // Export functions for global access
 window.editUser = editUser;
 window.deleteUser = deleteUser;
+window.managePermissions = managePermissions;

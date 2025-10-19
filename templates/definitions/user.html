@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}FST - User Management{% endblock %}
+{% block title %}FST - {{ translations.user_management or 'User Management' }}{% endblock %}
 
 {% block page_css %}
 <link href="{{ url_for('static', filename='css/definitions/user.css') }}" rel="stylesheet">
@@ -30,7 +30,7 @@
         </div>
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-bordered" id="usersTable" width="100%" cellspacing="0">
+                <table class="table table-bordered table-striped table-hover" id="usersTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
                             <th>{{ translations.id or 'ID' }}</th>
@@ -63,6 +63,9 @@
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary me-1" onclick="editUser('{{ user.id }}')">
                                         <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-outline-info me-1" onclick="managePermissions('{{ user.id }}')" title="Yetki Yönetimi">
+                                        <i class="fas fa-key"></i>
                                     </button>
                                     <button class="btn btn-sm btn-outline-danger" onclick="deleteUser('{{ user.id }}')">
                                         <i class="fas fa-trash"></i>

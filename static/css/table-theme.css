@@ -1,0 +1,277 @@
+/* Table Theme Compatibility CSS */
+/* Light/Dark theme compatible table styles */
+
+/* Base table styles */
+.table {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+.table th {
+    background-color: var(--bs-gray-100);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+    font-weight: 600;
+}
+
+.table td {
+    border-color: var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td,
+.table-striped > tbody > tr:nth-of-type(odd) > th {
+    background-color: var(--bs-gray-50);
+}
+
+.table-hover > tbody > tr:hover > td,
+.table-hover > tbody > tr:hover > th {
+    background-color: var(--bs-gray-100);
+}
+
+/* Dark mode styles */
+[data-bs-theme="dark"] .table {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border-color: var(--bs-gray-700);
+}
+
+[data-bs-theme="dark"] .table th {
+    background-color: var(--bs-gray-800);
+    color: var(--bs-light);
+    border-color: var(--bs-gray-700);
+}
+
+[data-bs-theme="dark"] .table td {
+    border-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > td,
+[data-bs-theme="dark"] .table-striped > tbody > tr:nth-of-type(odd) > th {
+    background-color: var(--bs-gray-800);
+}
+
+[data-bs-theme="dark"] .table-hover > tbody > tr:hover > td,
+[data-bs-theme="dark"] .table-hover > tbody > tr:hover > th {
+    background-color: var(--bs-gray-700);
+}
+
+/* Table responsive wrapper */
+.table-responsive {
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    border-radius: 0.375rem;
+}
+
+[data-bs-theme="dark"] .table-responsive {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+}
+
+/* Table pagination */
+.pagination {
+    background-color: var(--bs-body-bg);
+}
+
+.pagination .page-link {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+.pagination .page-link:hover {
+    background-color: var(--bs-gray-100);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+[data-bs-theme="dark"] .pagination {
+    background-color: var(--bs-dark);
+}
+
+[data-bs-theme="dark"] .pagination .page-link {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border-color: var(--bs-gray-700);
+}
+
+[data-bs-theme="dark"] .pagination .page-link:hover {
+    background-color: var(--bs-gray-700);
+    color: var(--bs-light);
+    border-color: var(--bs-gray-600);
+}
+
+/* Table search and filters */
+.table-search {
+    background-color: var(--bs-body-bg);
+    border: 1px solid var(--bs-border-color);
+    color: var(--bs-body-color);
+}
+
+.table-search:focus {
+    background-color: var(--bs-body-bg);
+    border-color: var(--bs-primary);
+    color: var(--bs-body-color);
+    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+[data-bs-theme="dark"] .table-search {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-gray-700);
+    color: var(--bs-light);
+}
+
+[data-bs-theme="dark"] .table-search:focus {
+    background-color: var(--bs-dark);
+    border-color: var(--bs-primary);
+    color: var(--bs-light);
+}
+
+/* Table buttons */
+.table-btn {
+    background-color: var(--bs-body-bg);
+    color: var(--bs-body-color);
+    border: 1px solid var(--bs-border-color);
+}
+
+.table-btn:hover {
+    background-color: var(--bs-gray-100);
+    color: var(--bs-body-color);
+    border-color: var(--bs-border-color);
+}
+
+[data-bs-theme="dark"] .table-btn {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+    border-color: var(--bs-gray-700);
+}
+
+[data-bs-theme="dark"] .table-btn:hover {
+    background-color: var(--bs-gray-700);
+    color: var(--bs-light);
+    border-color: var(--bs-gray-600);
+}
+
+/* Table badges */
+.table .badge {
+    font-size: 0.75em;
+}
+
+/* Table actions */
+.table-actions {
+    white-space: nowrap;
+}
+
+.table-actions .btn {
+    margin: 0 2px;
+}
+
+/* Table loading state */
+.table-loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.table-loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid var(--bs-primary);
+    border-radius: 50%;
+    border-top-color: transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Table empty state */
+.table-empty {
+    text-align: center;
+    padding: 2rem;
+    color: var(--bs-secondary-color);
+}
+
+[data-bs-theme="dark"] .table-empty {
+    color: var(--bs-gray-400);
+}
+
+/* Table selection */
+.table tbody tr.selected {
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+[data-bs-theme="dark"] .table tbody tr.selected {
+    background-color: var(--bs-primary-bg-subtle);
+}
+
+/* Table sorting indicators */
+.table th.sortable {
+    cursor: pointer;
+    user-select: none;
+}
+
+.table th.sortable:hover {
+    background-color: var(--bs-gray-200);
+}
+
+[data-bs-theme="dark"] .table th.sortable:hover {
+    background-color: var(--bs-gray-700);
+}
+
+.table th.sortable::after {
+    content: ' ↕';
+    opacity: 0.5;
+}
+
+.table th.sort-asc::after {
+    content: ' ↑';
+    opacity: 1;
+}
+
+.table th.sort-desc::after {
+    content: ' ↓';
+    opacity: 1;
+}
+
+/* Responsive table adjustments */
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .table-actions .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .table-responsive {
+        font-size: 0.8rem;
+    }
+    
+    .table th,
+    .table td {
+        padding: 0.375rem 0.125rem;
+    }
+}

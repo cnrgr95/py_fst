@@ -13,6 +13,297 @@ from datetime import datetime
 from config import Config
 
 app = Flask(__name__)
+
+# Yetki sistemi yardımcı fonksiyonları
+def get_user_permissions(user_id):
+    """Kullanıcının tüm yetkilerini getirir"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT DISTINCT p.name, p.module
+            FROM permissions p
+            LEFT JOIN user_permissions up ON p.id = up.permission_id AND up.user_id = %s
+            LEFT JOIN user_roles ur ON ur.user_id = %s
+            LEFT JOIN role_permissions rp ON ur.role_id = rp.role_id AND rp.permission_id = p.id
+            WHERE up.user_id IS NOT NULL OR rp.role_id IS NOT NULL
+        """, (user_id, user_id))
+        
+        permissions = cursor.fetchall()
+        return [{'name': perm[0], 'module': perm[1]} for perm in permissions]
+        
+    except Exception as e:
+        app.logger.error(f"Yetki getirme hatası: {e}")
+        return []
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def has_permission(user_id, permission_name):
+    """Kullanıcının belirli bir yetkisi var mı kontrol eder"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT COUNT(*) FROM (
+                SELECT 1 FROM user_permissions up
+                JOIN permissions p ON up.permission_id = p.id
+                WHERE up.user_id = %s AND p.name = %s
+                UNION
+                SELECT 1 FROM user_roles ur
+                JOIN role_permissions rp ON ur.role_id = rp.role_id
+                JOIN permissions p ON rp.permission_id = p.id
+                WHERE ur.user_id = %s AND p.name = %s
+            ) as user_perms
+        """, (user_id, permission_name, user_id, permission_name))
+        
+        count = cursor.fetchone()[0]
+        return count > 0
+        
+    except Exception as e:
+        app.logger.error(f"Yetki kontrol hatası: {e}")
+        return False
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def get_user_roles(user_id):
+    """Kullanıcının rollerini getirir"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT r.name, r.description
+            FROM roles r
+            JOIN user_roles ur ON r.id = ur.role_id
+            WHERE ur.user_id = %s
+        """, (user_id,))
+        
+        roles = cursor.fetchall()
+        return [{'name': role[0], 'description': role[1]} for role in roles]
+        
+    except Exception as e:
+        app.logger.error(f"Rol getirme hatası: {e}")
+        return []
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def get_all_permissions():
+    """Tüm yetkileri getirir"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, name, description, module
+            FROM permissions
+            ORDER BY module, name
+        """)
+        
+        permissions = cursor.fetchall()
+        return [{'id': perm[0], 'name': perm[1], 'description': perm[2], 'module': perm[3]} for perm in permissions]
+        
+    except Exception as e:
+        app.logger.error(f"Tüm yetkileri getirme hatası: {e}")
+        return []
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def get_all_roles():
+    """Tüm rolleri getirir"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            SELECT id, name, description
+            FROM roles
+            ORDER BY name
+        """)
+        
+        roles = cursor.fetchall()
+        return [{'id': role[0], 'name': role[1], 'description': role[2]} for role in roles]
+        
+    except Exception as e:
+        app.logger.error(f"Tüm rolleri getirme hatası: {e}")
+        return []
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def assign_permission_to_user(user_id, permission_id):
+    """Kullanıcıya yetki atar"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO user_permissions (user_id, permission_id, granted_by)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, permission_id) DO NOTHING
+        """, (user_id, permission_id, session.get('user_id')))
+        
+        conn.commit()
+        return True
+        
+    except Exception as e:
+        app.logger.error(f"Yetki atama hatası: {e}")
+        return False
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def remove_permission_from_user(user_id, permission_id):
+    """Kullanıcıdan yetki kaldırır"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            DELETE FROM user_permissions
+            WHERE user_id = %s AND permission_id = %s
+        """, (user_id, permission_id))
+        
+        conn.commit()
+        return True
+        
+    except Exception as e:
+        app.logger.error(f"Yetki kaldırma hatası: {e}")
+        return False
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def assign_role_to_user(user_id, role_id):
+    """Kullanıcıya rol atar"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            INSERT INTO user_roles (user_id, role_id, assigned_by)
+            VALUES (%s, %s, %s)
+            ON CONFLICT (user_id, role_id) DO NOTHING
+        """, (user_id, role_id, session.get('user_id')))
+        
+        conn.commit()
+        return True
+        
+    except Exception as e:
+        app.logger.error(f"Rol atama hatası: {e}")
+        return False
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def remove_role_from_user(user_id, role_id):
+    """Kullanıcıdan rol kaldırır"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            DELETE FROM user_roles
+            WHERE user_id = %s AND role_id = %s
+        """, (user_id, role_id))
+        
+        conn.commit()
+        return True
+        
+    except Exception as e:
+        app.logger.error(f"Rol kaldırma hatası: {e}")
+        return False
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+def get_sidebar_menu_items(user_id):
+    """Kullanıcının yetkilerine göre sidebar menü öğelerini getirir"""
+    menu_items = []
+    
+    # Dashboard - herkese açık
+    menu_items.append({
+        'name': 'dashboard',
+        'title': 'Dashboard',
+        'icon': 'fas fa-tachometer-alt',
+        'url': url_for('dashboard'),
+        'always_visible': True
+    })
+    
+    # Kullanıcı yönetimi - user_view yetkisi gerekli
+    if has_permission(user_id, 'user_view'):
+        menu_items.append({
+            'name': 'users',
+            'title': 'User Management',
+            'icon': 'fas fa-users',
+            'url': url_for('users'),
+            'always_visible': False
+        })
+    
+    # Tur yönetimi - tour_view yetkisi gerekli
+    if has_permission(user_id, 'tour_view'):
+        menu_items.append({
+            'name': 'tours',
+            'title': 'Tour Management',
+            'icon': 'fas fa-route',
+            'url': '#',
+            'always_visible': False
+        })
+    
+    # Maliyet yönetimi - cost_view yetkisi gerekli
+    if has_permission(user_id, 'cost_view'):
+        menu_items.append({
+            'name': 'costs',
+            'title': 'Cost Management',
+            'icon': 'fas fa-calculator',
+            'url': '#',
+            'always_visible': False
+        })
+    
+    # Raporlar - report_view yetkisi gerekli
+    if has_permission(user_id, 'report_view'):
+        menu_items.append({
+            'name': 'reports',
+            'title': 'Reports',
+            'icon': 'fas fa-chart-bar',
+            'url': '#',
+            'always_visible': False
+        })
+    
+    # Ayarlar - settings_view yetkisi gerekli
+    if has_permission(user_id, 'settings_view'):
+        menu_items.append({
+            'name': 'settings',
+            'title': 'Settings',
+            'icon': 'fas fa-cog',
+            'url': '#',
+            'always_visible': False
+        })
+    
+    # Support - herkese açık
+    menu_items.append({
+        'name': 'support',
+        'title': 'Support',
+        'icon': 'fas fa-question-circle',
+        'url': '#',
+        'always_visible': True
+    })
+    
+    return menu_items
 app.secret_key = Config.SECRET_KEY
 app.permanent_session_lifetime = Config.PERMANENT_SESSION_LIFETIME
 
@@ -47,6 +338,16 @@ csp = {
     'img-src': ["'self'", "data:"],
     'font-src': ["'self'", "cdnjs.cloudflare.com", "fonts.gstatic.com", "fonts.googleapis.com"],
 }
+
+# Template context'e fonksiyonları ekle
+@app.context_processor
+def inject_permissions():
+    """Template'lerde kullanılabilir fonksiyonları ekler"""
+    return {
+        'has_permission': has_permission,
+        'get_user_permissions': get_user_permissions,
+        'get_user_roles': get_user_roles
+    }
 
 # Geçici olarak Talisman tamamen devre dışı (geliştirme için)
 # Talisman(app, content_security_policy=csp, force_https=False)
@@ -281,6 +582,161 @@ def change_language(lang):
         return redirect(request.referrer or url_for('dashboard'))
     else:
         return redirect(request.referrer or url_for('login'))
+
+@app.route('/user_permissions/<int:user_id>')
+def user_permissions(user_id):
+    """Kullanıcı yetki yönetimi sayfası"""
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Yetki kontrolü - sadece admin ve manager yetkisi olanlar
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        flash('Bu sayfaya erişim yetkiniz yok!', 'error')
+        return redirect(url_for('users'))
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        
+        # Kullanıcı bilgilerini getir
+        cursor.execute("""
+            SELECT id, username, email, full_name, is_active, created_at, last_login
+            FROM users WHERE id = %s
+        """, (user_id,))
+        user = cursor.fetchone()
+        
+        if not user:
+            flash('Kullanıcı bulunamadı!', 'error')
+            return redirect(url_for('users'))
+        
+        # Kullanıcının mevcut yetkilerini getir
+        user_permissions = get_user_permissions(user_id)
+        
+        # Kullanıcının rollerini getir
+        user_roles = get_user_roles(user_id)
+        
+        # Tüm yetkileri getir
+        all_permissions = get_all_permissions()
+        
+        # Tüm rolleri getir
+        all_roles = get_all_roles()
+        
+        # Modüllere göre yetkileri grupla
+        permissions_by_module = {}
+        for perm in all_permissions:
+            module = perm['module']
+            if module not in permissions_by_module:
+                permissions_by_module[module] = []
+            permissions_by_module[module].append(perm)
+        
+        return render_template('definitions/user_permissions.html',
+                             user=user,
+                             user_permissions=user_permissions,
+                             user_roles=user_roles,
+                             all_permissions=all_permissions,
+                             all_roles=all_roles,
+                             permissions_by_module=permissions_by_module)
+        
+    except Exception as e:
+        app.logger.error(f"Kullanıcı yetki sayfası hatası: {e}")
+        flash('Sayfa yüklenirken hata oluştu!', 'error')
+        return redirect(url_for('users'))
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+@app.route('/assign_permission', methods=['POST'])
+def assign_permission():
+    """Kullanıcıya yetki atar"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        user_id = request.json.get('user_id')
+        permission_id = request.json.get('permission_id')
+        
+        if assign_permission_to_user(user_id, permission_id):
+            return jsonify({'success': True, 'message': 'Yetki başarıyla atandı!'})
+        else:
+            return jsonify({'success': False, 'message': 'Yetki atanırken hata oluştu!'})
+            
+    except Exception as e:
+        app.logger.error(f"Yetki atama hatası: {e}")
+        return jsonify({'success': False, 'message': 'Yetki atanırken hata oluştu!'})
+
+@app.route('/remove_permission', methods=['POST'])
+def remove_permission():
+    """Kullanıcıdan yetki kaldırır"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        user_id = request.json.get('user_id')
+        permission_id = request.json.get('permission_id')
+        
+        if remove_permission_from_user(user_id, permission_id):
+            return jsonify({'success': True, 'message': 'Yetki başarıyla kaldırıldı!'})
+        else:
+            return jsonify({'success': False, 'message': 'Yetki kaldırılırken hata oluştu!'})
+            
+    except Exception as e:
+        app.logger.error(f"Yetki kaldırma hatası: {e}")
+        return jsonify({'success': False, 'message': 'Yetki kaldırılırken hata oluştu!'})
+
+@app.route('/assign_role', methods=['POST'])
+def assign_role():
+    """Kullanıcıya rol atar"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        user_id = request.json.get('user_id')
+        role_id = request.json.get('role_id')
+        
+        if assign_role_to_user(user_id, role_id):
+            return jsonify({'success': True, 'message': 'Rol başarıyla atandı!'})
+        else:
+            return jsonify({'success': False, 'message': 'Rol atanırken hata oluştu!'})
+            
+    except Exception as e:
+        app.logger.error(f"Rol atama hatası: {e}")
+        return jsonify({'success': False, 'message': 'Rol atanırken hata oluştu!'})
+
+@app.route('/remove_role', methods=['POST'])
+def remove_role():
+    """Kullanıcıdan rol kaldırır"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        user_id = request.json.get('user_id')
+        role_id = request.json.get('role_id')
+        
+        if remove_role_from_user(user_id, role_id):
+            return jsonify({'success': True, 'message': 'Rol başarıyla kaldırıldı!'})
+        else:
+            return jsonify({'success': False, 'message': 'Rol kaldırılırken hata oluştu!'})
+            
+    except Exception as e:
+        app.logger.error(f"Rol kaldırma hatası: {e}")
+        return jsonify({'success': False, 'message': 'Rol kaldırılırken hata oluştu!'})
 
 
 # Hata sayfaları

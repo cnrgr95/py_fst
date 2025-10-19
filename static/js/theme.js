@@ -1,7 +1,12 @@
-// Theme JavaScript
+// Theme Management JavaScript
+// Clean, organized theme switching functionality
+
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // Theme toggle button
+    initializeTheme();
+});
+
+// Initialize theme system
+function initializeTheme() {
     const themeToggle = document.getElementById('themeToggle');
     const body = document.body;
     
@@ -18,36 +23,49 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Set theme function
-    function setTheme(theme) {
-        body.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-        
-        // Update theme toggle button icon
-        if (themeToggle) {
-            const icon = themeToggle.querySelector('i');
-            if (theme === 'dark') {
-                icon.className = 'fas fa-sun';
-                themeToggle.setAttribute('title', 'Switch to Light Mode');
-            } else {
-                icon.className = 'fas fa-moon';
-                themeToggle.setAttribute('title', 'Switch to Dark Mode');
-            }
+    // Listen for system theme changes
+    initializeSystemThemeDetection();
+}
+
+// Set theme function
+function setTheme(theme) {
+    const body = document.body;
+    const themeToggle = document.getElementById('themeToggle');
+    
+    body.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+    
+    // Update theme toggle button icon
+    if (themeToggle) {
+        const icon = themeToggle.querySelector('i');
+        if (theme === 'dark') {
+            icon.className = 'fas fa-sun';
+            themeToggle.setAttribute('title', 'Switch to Light Mode');
+        } else {
+            icon.className = 'fas fa-moon';
+            themeToggle.setAttribute('title', 'Switch to Dark Mode');
         }
-        
-        // Update meta theme-color for mobile browsers
-        const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-        if (metaThemeColor) {
-            metaThemeColor.setAttribute('content', theme === 'dark' ? '#2d3748' : '#ffffff');
-        }
-        
-        // Trigger custom event for theme change
-        document.dispatchEvent(new CustomEvent('themeChanged', {
-            detail: { theme: theme }
-        }));
     }
     
-    // Listen for system theme changes
+    // Update meta theme-color for mobile browsers
+    updateMetaThemeColor(theme);
+    
+    // Trigger custom event for theme change
+    document.dispatchEvent(new CustomEvent('themeChanged', {
+        detail: { theme: theme }
+    }));
+}
+
+// Update meta theme color
+function updateMetaThemeColor(theme) {
+    const metaThemeColor = document.querySelector('meta[name="theme-color"]');
+    if (metaThemeColor) {
+        metaThemeColor.setAttribute('content', theme === 'dark' ? '#2d3748' : '#ffffff');
+    }
+}
+
+// Initialize system theme detection
+function initializeSystemThemeDetection() {
     if (window.matchMedia) {
         const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
         
@@ -64,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-});
+}
 
 // Theme utility functions
 const ThemeUtils = {

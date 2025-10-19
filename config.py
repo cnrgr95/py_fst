@@ -60,6 +60,23 @@ class Config:
             'password': Config.DB_PASSWORD
         }
 
+def get_db_connection():
+    """Veritabanı bağlantısı oluşturur"""
+    import psycopg2
+    try:
+        conn = psycopg2.connect(
+            host=Config.DB_HOST,
+            port=Config.DB_PORT,
+            database=Config.DB_NAME,
+            user=Config.DB_USER,
+            password=Config.DB_PASSWORD,
+            connect_timeout=10
+        )
+        return conn
+    except Exception as e:
+        print(f"PostgreSQL veritabanı bağlantı hatası: {e}")
+        return None
+
 class DevelopmentConfig(Config):
     """Geliştirme ortamı konfigürasyonu"""
     DEBUG = True

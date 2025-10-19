@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+
+{% block title %}FST - {{ translations.user_permissions or 'User Permissions' }} - {{ user.full_name }}{% endblock %}
+
+{% block page_css %}
+<link href="{{ url_for('static', filename='css/definitions/user.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/definitions/user_permissions.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/table-theme.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4" data-user-id="{{ user.id }}">
+    <!-- User Information Card -->
+    <div class="user-info-card">
+        <div class="user-info-body">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="user-details">
+                        <h3>{{ user.full_name }}</h3>
+                        <p><strong>{{ translations.username or 'Username' }}:</strong> {{ user.username }}</p>
+                        <p><strong>{{ translations.email or 'Email' }}:</strong> {{ user.email }}</p>
+                        <small>
+                            {% if user.is_active %}
+                                <i class="fas fa-check-circle text-success"></i> {{ translations.active or 'Active' }}
+                            {% else %}
+                                <i class="fas fa-times-circle text-danger"></i> {{ translations.inactive or 'Inactive' }}
+                            {% endif %}
+                            | {{ translations.created or 'Created' }}: {{ user.created_at.strftime('%d.%m.%Y') if user.created_at else translations.unknown or 'Unknown' }}
+                            {% if user.last_login %}
+                                | {{ translations.last_login or 'Last Login' }}: {{ user.last_login.strftime('%d.%m.%Y %H:%M') }}
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+                <div class="col-auto">
+                    <a href="{{ url_for('users') }}" class="btn btn-light btn-lg btn-back">
+                        <i class="fas fa-arrow-left me-2"></i>
+                        {{ translations.back or 'Back' }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Permission Statistics -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        {{ translations.permission_statistics or 'Permission Statistics' }}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="module-stats">
+                        {% for module, permissions in permissions_by_module.items() %}
+                        <div class="stat-item">
+                            <h6>{{ module|title }}</h6>
+                            {% set active_count = 0 %}
+                            {% for permission in permissions %}
+                                {% for user_perm in user_permissions %}
+                                    {% if user_perm.name == permission.name %}
+                                        {% set active_count = active_count + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                            <div class="stat-number">{{ active_count }}/{{ permissions|length }}</div>
+                            <div class="stat-label">{{ translations.active_permissions or 'Active' }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Permissions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-key me-2"></i>
+                        {{ translations.user_permissions or 'User Permissions' }}
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="permissions-container">
+                        {% if permissions_by_module %}
+                            {% for module, permissions in permissions_by_module.items() %}
+                            <div class="permission-card">
+                                <div class="permission-header">
+                                    <div>
+                                        <i class="fas fa-folder me-2"></i>
+                                        {{ module|title }} {{ translations.module or 'Module' }}
+                                    </div>
+                                    <span class="permission-count">
+                                        {% set active_count = 0 %}
+                                        {% for permission in permissions %}
+                                            {% for user_perm in user_permissions %}
+                                                {% if user_perm.name == permission.name %}
+                                                    {% set active_count = active_count + 1 %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        {% endfor %}
+                                        {{ active_count }}/{{ permissions|length }}
+                                    </span>
+                                </div>
+                                <div class="permission-body">
+                                    {% for permission in permissions %}
+                                    <div class="permission-item">
+                                        <div class="permission-info">
+                                            <div class="permission-name">{{ permission.description }}</div>
+                                            <div class="permission-description">{{ permission.name }}</div>
+                                        </div>
+                                        <div class="permission-status">
+                                            {% set has_perm = false %}
+                                            {% for user_perm in user_permissions %}
+                                                {% if user_perm.name == permission.name %}
+                                                    {% set has_perm = true %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            {% if has_perm %}
+                                                <span class="status-indicator status-active"></span>
+                                                <span class="badge bg-success">{{ translations.active or 'Active' }}</span>
+                                            {% else %}
+                                                <span class="status-indicator status-inactive"></span>
+                                                <span class="badge bg-secondary">{{ translations.inactive or 'Inactive' }}</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="text-center py-5">
+                                <i class="fas fa-exclamation-triangle fa-3x text-muted mb-3"></i>
+                                <h5 class="text-muted">{{ translations.no_permissions_found or 'No permissions found' }}</h5>
+                                <p class="text-muted">{{ translations.loading_permissions or 'Loading permissions...' }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="{{ url_for('static', filename='js/definitions/user_permissions.js') }}"></script>
+{% endblock %}
