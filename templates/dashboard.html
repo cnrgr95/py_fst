@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}FST - Dashboard{% endblock %}
+{% block title %}FST - {{ translations.dashboard or 'Dashboard' }}{% endblock %}
 
 {% block page_css %}
 <link href="{{ url_for('static', filename='css/dashboard.css') }}" rel="stylesheet">
@@ -9,12 +9,12 @@
 {% block content %}
 <div class="container-fluid px-4">
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-2 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Dashboard</h1>
+        <h1 class="h2">{{ translations.dashboard or 'Dashboard' }}</h1>
         <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
                 <button type="button" class="btn btn-sm btn-outline-secondary">
                     <i class="fas fa-download me-1"></i>
-                    Reports
+                    {{ translations.reports or 'Reports' }}
                 </button>
             </div>
         </div>
@@ -29,7 +29,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Tours
+                                {{ translations.tours or 'Tours' }}
                             </div>
                             <div class="h6 mb-0 font-weight-bold text-gray-800">0</div>
                         </div>
@@ -47,7 +47,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Tour Price
+                                {{ translations.tour_price or 'Tour Price' }}
                             </div>
                             <div class="h6 mb-0 font-weight-bold text-gray-800">$0</div>
                         </div>
@@ -65,7 +65,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                Users
+                                {{ translations.users or 'Users' }}
                             </div>
                             <div class="h6 mb-0 font-weight-bold text-gray-800">2</div>
                         </div>
@@ -83,7 +83,7 @@
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                Cost
+                                {{ translations.cost or 'Cost' }}
                             </div>
                             <div class="h6 mb-0 font-weight-bold text-gray-800">$0</div>
                         </div>
@@ -103,11 +103,11 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-history me-2"></i>
-                        Recent Activity
+                        {{ translations.recent_activity or 'Recent Activity' }}
                     </h6>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted">No recent activity to display.</p>
+                    <p class="text-muted">{{ translations.no_recent_activity or 'No recent activity to display.' }}</p>
                 </div>
             </div>
         </div>
@@ -117,14 +117,14 @@
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">
                         <i class="fas fa-info-circle me-2"></i>
-                        System Info
+                        {{ translations.system_info or 'System Info' }}
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="text-center">
                         <i class="fas fa-calculator fa-3x mb-3" style="color: var(--sidebar-active) !important;"></i>
-                        <h5>Tourism Cost Calculation System</h5>
-                        <p class="text-muted">Version 1.0.0</p>
+                        <h5>{{ translations.tourism_cost_calculation_system or 'Tourism Cost Calculation System' }}</h5>
+                        <p class="text-muted">{{ translations.version or 'Version' }} 1.0.0</p>
                     </div>
                 </div>
             </div>

@@ -56,5 +56,12 @@
   "support": "Destek",
   "user_info": "Kullanıcı Bilgileri",
   "profile": "Profil",
-  "logout": "Çıkış"
+  "logout": "Çıkış",
+  "tours": "Turlar",
+  "tour_price": "Tur Fiyatı",
+  "recent_activity": "Son Aktiviteler",
+  "system_info": "Sistem Bilgisi",
+  "no_recent_activity": "Gösterilecek son aktivite yok.",
+  "tourism_cost_calculation_system": "Turizm Maliyet Hesaplama Sistemi",
+  "version": "Sürüm"
 }

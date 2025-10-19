@@ -56,5 +56,12 @@
   "support": "Support",
   "user_info": "User Information",
   "profile": "Profile",
-  "logout": "Logout"
+  "logout": "Logout",
+  "tours": "Tours",
+  "tour_price": "Tour Price",
+  "recent_activity": "Recent Activity",
+  "system_info": "System Info",
+  "no_recent_activity": "No recent activity to display.",
+  "tourism_cost_calculation_system": "Tourism Cost Calculation System",
+  "version": "Version"
 }
