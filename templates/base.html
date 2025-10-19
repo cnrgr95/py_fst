@@ -14,6 +14,9 @@
     <link href="{{ url_for('static', filename='css/topbar.css') }}" rel="stylesheet">
     {% endif %}
     
+    <!-- Page specific CSS -->
+    {% block page_css %}{% endblock %}
+    
     <!-- Dark Mode CSS Variables -->
     <style>
         :root {
