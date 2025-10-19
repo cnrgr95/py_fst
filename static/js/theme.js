@@ -33,6 +33,7 @@ function setTheme(theme) {
     const themeToggle = document.getElementById('themeToggle');
     
     body.setAttribute('data-theme', theme);
+    document.documentElement.setAttribute('data-bs-theme', theme);
     localStorage.setItem('theme', theme);
     
     // Update theme toggle button icon
@@ -96,6 +97,7 @@ const ThemeUtils = {
         if (theme === 'light' || theme === 'dark') {
             const body = document.body;
             body.setAttribute('data-theme', theme);
+            document.documentElement.setAttribute('data-bs-theme', theme);
             localStorage.setItem('theme', theme);
             
             // Update theme toggle button

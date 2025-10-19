@@ -378,5 +378,9 @@
     "no_entries": "Kayıt bulunamadı",
     "filtered_entries": "(_MAX_ toplam kayıttan filtrelendi)",
     "first": "İlk",
-    "last": "Son"
+    "last": "Son",
+    "coast": "Maliyet",
+    "tour_list": "Tur Listesi",
+    "mail_settings": "Malilet",
+    "cash": "Cash"
 }

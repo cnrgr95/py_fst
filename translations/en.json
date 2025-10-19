@@ -378,5 +378,9 @@
     "no_entries": "No entries found",
     "filtered_entries": "(filtered from _MAX_ total entries)",
     "first": "First",
-    "last": "Last"
+    "last": "Last",
+    "coast": "Coast",
+    "tour_list": "Tour List",
+    "mail_settings": "Mail Settings",
+    "cash": "Cash"
 }
