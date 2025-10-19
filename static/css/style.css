@@ -113,9 +113,9 @@ body {
     }
 }
 
-/* Main content top margin for topbar */
+/* Main content - topbar spacing handled in topbar.css */
 .main-content {
-    margin-top: var(--topbar-height, 60px);
+    /* margin-top removed - handled by topbar.css padding-top */
 }
 
 /* Custom utilities */

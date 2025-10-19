@@ -159,9 +159,12 @@
     border: 1px solid var(--sidebar-border);
     background-color: var(--sidebar-bg);
     box-shadow: var(--sidebar-shadow);
-    min-width: 150px;
+    width: 100%;
+    min-width: unset;
+    max-width: 100%;
     position: absolute;
     top: 100%;
+    left: 0;
     right: 0;
     z-index: 1000;
     transform: translateY(0);
@@ -169,6 +172,12 @@
 
 .language-dropdown .dropdown-item {
     color: var(--sidebar-text);
+    padding: 0.5rem 1rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    text-align: right;
     transition: all 0.2s ease;
 }
 
@@ -286,7 +295,7 @@
 
 /* Main Content Top Padding */
 .main-content {
-    padding-top: var(--topbar-height);
+    padding-top: calc(var(--topbar-height) + 5px);
 }
 
 /* Animation for theme toggle */

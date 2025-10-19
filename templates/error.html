@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}FST - Error {{ error_code }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="error-page text-center">
+                <div class="error-code">
+                    <h1 class="display-1 fw-bold text-primary">{{ error_code }}</h1>
+                </div>
+                <div class="error-message">
+                    <h2 class="h4 mb-3">{{ error_message }}</h2>
+                    <p class="text-muted mb-4">
+                        {% if error_code == 404 %}
+                            Aradığınız sayfa bulunamadı. Lütfen URL'yi kontrol edin.
+                        {% elif error_code == 500 %}
+                            Sunucu tarafında bir hata oluştu. Lütfen daha sonra tekrar deneyin.
+                        {% elif error_code == 403 %}
+                            Bu sayfaya erişim yetkiniz bulunmuyor.
+                        {% elif error_code == 429 %}
+                            Çok fazla istek gönderdiniz. Lütfen bir süre bekleyin.
+                        {% else %}
+                            Beklenmeyen bir hata oluştu.
+                        {% endif %}
+                    </p>
+                    <div class="error-actions">
+                        <a href="{{ url_for('dashboard') if session.get('user_id') else url_for('login') }}" 
+                           class="btn btn-primary me-2">
+                            <i class="fas fa-home me-1"></i>
+                            Ana Sayfa
+                        </a>
+                        <button onclick="history.back()" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-1"></i>
+                            Geri Dön
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    padding: 4rem 2rem;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.error-code h1 {
+    font-size: 8rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.error-message h2 {
+    color: #495057;
+    font-weight: 600;
+}
+
+.error-actions {
+    margin-top: 2rem;
+}
+
+.error-actions .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .error-code h1 {
+        font-size: 6rem;
+    }
+    
+    .error-page {
+        padding: 2rem 1rem;
+    }
+}
+</style>
+{% endblock %}

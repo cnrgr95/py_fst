@@ -32,17 +32,23 @@
             <div class="dropdown">
                 <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Select language">
                     <i class="fas fa-globe"></i>
-                    <span class="d-none d-sm-inline">{{ translations.language or 'Language' }}</span>
+                    <span class="d-none d-sm-inline">
+                        {% if session.get('language') == 'tr' %}
+                            Türkçe
+                        {% else %}
+                            English
+                        {% endif %}
+                    </span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
                         <a class="dropdown-item" href="{{ url_for('change_language', lang='en') }}">
-                            <i class="fas fa-flag-usa me-2"></i>English
+                            English
                         </a>
                     </li>
                     <li>
                         <a class="dropdown-item" href="{{ url_for('change_language', lang='tr') }}">
-                            <i class="fas fa-flag me-2"></i>Turkish
+                            Türkçe
                         </a>
                     </li>
                 </ul>
