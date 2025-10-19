@@ -39,8 +39,8 @@
 
 /* Sidebar Styles */
 :root {
-    --sidebar-width: 280px;
-    --sidebar-collapsed-width: 70px;
+    --sidebar-width: 260px;
+    --sidebar-collapsed-width: 60px;
     --sidebar-header-height: 72px; /* 1rem padding + 1rem padding + 40px logo */
     --topbar-height: var(--sidebar-header-height);
     --sidebar-bg: #ffffff;
@@ -73,7 +73,7 @@
     box-shadow: var(--sidebar-shadow);
     z-index: 1050;
     transition: width 0.3s ease;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 /* Sidebar hover expansion */
@@ -235,11 +235,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--sidebar-border);
     background-color: var(--sidebar-bg);
     height: var(--sidebar-header-height);
     min-height: var(--sidebar-header-height);
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .sidebar-header-buttons {
@@ -333,7 +335,9 @@
 
 /* Sidebar Menu */
 .sidebar-menu {
-    padding: 1rem 0 80px 0; /* Footer için alt boşluk */
+    padding: 0.5rem 0 60px 0; /* Footer için alt boşluk */
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .sidebar-menu .nav {
@@ -481,8 +485,8 @@
 .sidebar-menu .nav-link {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1.5rem;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
     color: var(--sidebar-text);
     text-decoration: none;
     border-radius: 0;
@@ -490,6 +494,8 @@
     background: none;
     transition: all 0.2s ease;
     position: relative;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 /* Ensure collapse triggers have relative positioning for proper dropdown positioning */
@@ -611,7 +617,7 @@
         z-index: 1050;
         transition: transform 0.3s ease;
         height: 100vh;
-        overflow-y: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
     }
     
@@ -734,12 +740,12 @@
 /* Responsive scroll fix */
 @media (max-width: 991.98px) {
     .sidebar {
-        overflow-y: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
     }
     
     .sidebar.show {
-        overflow-y: auto;
+        overflow-y: hidden;
     }
 }
 
