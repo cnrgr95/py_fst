@@ -1,230 +1,370 @@
-/* User Management Page Styles */
+/* User Management Dark Mode Styles */
 
-/* User Table Styles */
-.users-table {
-    font-size: 0.9rem;
+/* Table Dark Mode */
+.table {
+    color: var(--text-primary);
+    background-color: var(--table-bg);
 }
 
-.users-table th {
-    background-color: var(--bs-gray-100);
-    font-weight: 600;
-    border-bottom: 2px solid var(--bs-gray-300);
-    padding: 1rem 0.75rem;
+.table th {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
 }
 
-.users-table td {
-    padding: 0.75rem;
-    vertical-align: middle;
-    border-bottom: 1px solid var(--bs-gray-200);
+.table td {
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
-.users-table tbody tr:hover {
-    background-color: var(--bs-gray-50);
+.table-striped > tbody > tr:nth-of-type(odd) > td,
+.table-striped > tbody > tr:nth-of-type(odd) > th {
+    background-color: var(--table-hover);
 }
 
-/* Status Badges */
-.status-badge {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    border-radius: 0.375rem;
+.table tbody tr:hover {
+    background-color: var(--bg-tertiary);
 }
 
-.status-active {
-    background-color: var(--bs-success);
-    color: white;
+/* Card Dark Mode */
+.card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
 }
 
-.status-inactive {
-    background-color: var(--bs-danger);
-    color: white;
+.card-header {
+    background-color: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+    color: var(--text-primary);
 }
 
-/* Action Buttons */
-.action-buttons {
-    display: flex;
-    gap: 0.25rem;
+/* Form Dark Mode */
+.form-control {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
-.action-btn {
-    padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+.form-control:focus {
+    background-color: var(--input-bg);
+    border-color: var(--sidebar-active);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
 }
 
-.action-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.form-label {
+    color: var(--text-primary);
 }
 
-/* Modal Styles */
-.user-modal .modal-header {
-    background-color: var(--bs-primary);
-    color: white;
-    border-bottom: none;
+.form-select {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
-.user-modal .modal-title {
-    font-weight: 600;
+.form-select:focus {
+    border-color: var(--sidebar-active);
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
 }
 
-.user-modal .form-label {
-    font-weight: 500;
-    color: var(--bs-gray-700);
-    margin-bottom: 0.5rem;
+/* Modal Dark Mode */
+.modal-content {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
 }
 
-.user-modal .form-control {
-    border: 1px solid var(--bs-gray-300);
-    border-radius: 0.375rem;
-    padding: 0.75rem;
-    transition: all 0.2s ease;
+.modal-header {
+    border-bottom-color: var(--border-color);
+    color: var(--text-primary);
 }
 
-.user-modal .form-control:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+.modal-footer {
+    border-top-color: var(--border-color);
 }
 
-.user-modal .form-check-input:checked {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
+.modal-title {
+    color: var(--text-primary);
 }
 
-/* Button Styles */
-.btn-add-user {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
+/* Button Dark Mode */
+.btn-outline-primary {
+    color: var(--sidebar-active);
+    border-color: var(--sidebar-active);
 }
 
-.btn-add-user:hover {
-    background-color: var(--bs-primary-dark);
-    border-color: var(--bs-primary-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.btn-outline-primary:hover {
+    background-color: var(--sidebar-active);
+    border-color: var(--sidebar-active);
 }
 
-/* Card Styles */
-.user-card {
-    border: none;
-    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-    border-radius: 0.5rem;
+.btn-outline-danger {
+    color: #dc3545;
+    border-color: #dc3545;
 }
 
-.user-card .card-header {
-    background-color: var(--bs-primary);
-    color: white;
-    border-bottom: none;
-    border-radius: 0.5rem 0.5rem 0 0;
-    padding: 1rem 1.5rem;
+.btn-outline-danger:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
 }
 
-.user-card .card-header h6 {
-    margin: 0;
-    font-weight: 600;
+.btn-outline-secondary {
+    color: var(--text-secondary);
+    border-color: var(--border-color);
 }
 
-/* Table Responsive */
+.btn-outline-secondary:hover {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary {
+    background-color: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.btn-primary {
+    background-color: var(--sidebar-active);
+    border-color: var(--sidebar-active);
+}
+
+.btn-primary:hover {
+    background-color: #3c5aa6;
+    border-color: #3c5aa6;
+}
+
+/* Badge Dark Mode */
+.badge {
+    color: var(--text-primary);
+}
+
+.badge.bg-success {
+    background-color: #28a745 !important;
+}
+
+.badge.bg-danger {
+    background-color: #dc3545 !important;
+}
+
+/* Text Colors */
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Border Colors */
+.border {
+    border-color: var(--border-color) !important;
+}
+
+/* Alert Dark Mode */
+.alert {
+    border-color: var(--border-color);
+}
+
+.alert-success {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: #28a745;
+    color: #28a745;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: #dc3545;
+    color: #dc3545;
+}
+
+.alert-warning {
+    background-color: rgba(255, 193, 7, 0.1);
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.alert-info {
+    background-color: rgba(23, 162, 184, 0.1);
+    border-color: #17a2b8;
+    color: #17a2b8;
+}
+
+/* DataTable Dark Mode */
+.dataTables_wrapper {
+    color: var(--text-primary);
+}
+
+.dataTables_length select,
+.dataTables_filter input {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.dataTables_info {
+    color: var(--text-secondary);
+}
+
+.dataTables_paginate .paginate_button {
+    color: var(--text-primary) !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background-color: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+.dataTables_paginate .paginate_button.current {
+    background-color: var(--sidebar-active) !important;
+    color: white !important;
+}
+
+/* Additional Users List specific fixes */
+.table {
+    background-color: var(--table-bg) !important;
+    color: var(--text-primary) !important;
+}
+
+.table thead th {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    font-weight: 600 !important;
+    font-size: 0.875rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+}
+
+.table tbody td {
+    background-color: var(--table-bg) !important;
+    color: var(--text-primary) !important;
+    border-color: var(--border-color) !important;
+    vertical-align: middle !important;
+    padding: 0.75rem !important;
+}
+
+.table tbody tr:nth-of-type(odd) td {
+    background-color: var(--table-hover) !important;
+}
+
+.table tbody tr:hover td {
+    background-color: var(--bg-tertiary) !important;
+}
+
+.table-bordered {
+    border-color: var(--border-color) !important;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-color: var(--border-color) !important;
+}
+
+.table-responsive {
+    background-color: var(--table-bg) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 0.5rem !important;
+    overflow: hidden !important;
+}
+
+/* Card specific fixes */
+.card {
+    background-color: var(--card-bg) !important;
+    border-color: var(--border-color) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.card-header {
+    background-color: var(--bg-secondary) !important;
+    border-bottom-color: var(--border-color) !important;
+    padding: 1rem 1.5rem !important;
+}
+
+.card-header h6 {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+}
+
+.card-header .text-primary {
+    color: var(--sidebar-active) !important;
+}
+
+.card-body {
+    background-color: var(--card-bg) !important;
+    padding: 1.5rem !important;
+}
+
+/* Button fixes */
+.btn-primary {
+    background-color: var(--sidebar-active) !important;
+    border-color: var(--sidebar-active) !important;
+    color: white !important;
+}
+
+.btn-primary:hover {
+    background-color: #3c5aa6 !important;
+    border-color: #3c5aa6 !important;
+}
+
+.btn-sm {
+    padding: 0.375rem 0.75rem !important;
+    font-size: 0.875rem !important;
+}
+
+/* Icon fixes */
+.fas {
+    color: inherit !important;
+}
+
+/* Page header fixes */
+.h2 {
+    color: var(--text-primary) !important;
+    font-weight: 600 !important;
+}
+
+.border-bottom {
+    border-bottom-color: var(--border-color) !important;
+}
+
+/* Empty state fixes */
+.text-center {
+    color: var(--text-secondary) !important;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-    .users-table {
-        font-size: 0.8rem;
+    .table-responsive {
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
     }
     
-    .users-table th,
-    .users-table td {
-        padding: 0.5rem 0.25rem;
+    .table thead th {
+        font-size: 0.75rem !important;
+        padding: 0.5rem !important;
     }
     
-    .action-buttons {
-        flex-direction: column;
-        gap: 0.125rem;
+    .table tbody td {
+        font-size: 0.875rem !important;
+        padding: 0.5rem !important;
     }
     
-    .action-btn {
-        padding: 0.125rem 0.25rem;
-        font-size: 0.75rem;
+    .card-header {
+        padding: 0.75rem 1rem !important;
     }
-}
-
-/* Loading States */
-.loading {
-    opacity: 0.6;
-    pointer-events: none;
-}
-
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid var(--bs-primary);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Form Validation */
-.is-invalid {
-    border-color: var(--bs-danger);
-}
-
-.invalid-feedback {
-    display: block;
-    color: var(--bs-danger);
-    font-size: 0.875rem;
-    margin-top: 0.25rem;
-}
-
-/* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--bs-gray-500);
-}
-
-.empty-state i {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    color: var(--bs-gray-300);
-}
-
-/* Dark Theme Support */
-[data-theme="dark"] .users-table th {
-    background-color: var(--bs-gray-800);
-    color: var(--bs-gray-100);
-}
-
-[data-theme="dark"] .users-table tbody tr:hover {
-    background-color: var(--bs-gray-800);
-}
-
-[data-theme="dark"] .user-modal .form-label {
-    color: var(--bs-gray-300);
-}
-
-[data-theme="dark"] .user-modal .form-control {
-    background-color: var(--bs-gray-800);
-    border-color: var(--bs-gray-600);
-    color: var(--bs-gray-100);
-}
-
-[data-theme="dark"] .empty-state {
-    color: var(--bs-gray-400);
-}
-
-[data-theme="dark"] .empty-state i {
-    color: var(--bs-gray-600);
+    
+    .card-body {
+        padding: 1rem !important;
+    }
 }

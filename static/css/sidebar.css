@@ -38,12 +38,17 @@
 }
 
 /* Sidebar hover expansion */
-.sidebar:hover {
+.sidebar:hover:not(.locked) {
     width: var(--sidebar-width);
 }
 
 /* Sidebar Locked State - Always expanded */
 .sidebar.locked {
+    width: var(--sidebar-width) !important;
+}
+
+/* Disable hover effect when locked */
+.sidebar.locked:hover {
     width: var(--sidebar-width) !important;
 }
 
@@ -254,6 +259,14 @@
 .sidebar.locked .sidebar-lock-toggle {
     opacity: 1;
     visibility: visible;
+}
+
+/* Make lock button always visible when sidebar is expanded (not collapsed) */
+@media (min-width: 992px) {
+    .sidebar .sidebar-lock-toggle {
+        opacity: 1;
+        visibility: visible;
+    }
 }
 
 .sidebar-lock-toggle:hover {

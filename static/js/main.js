@@ -53,6 +53,47 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Popover(popoverTriggerEl);
     });
     
+    // Dark Mode Toggle
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            // Update icon
+            const icon = this.querySelector('i');
+            if (newTheme === 'dark') {
+                icon.className = 'fas fa-sun';
+                this.title = 'Switch to Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                this.title = 'Switch to Dark Mode';
+            }
+        });
+    }
+    
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        
+        // Update toggle button icon
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            const icon = themeToggle.querySelector('i');
+            if (savedTheme === 'dark') {
+                icon.className = 'fas fa-sun';
+                themeToggle.title = 'Switch to Light Mode';
+            } else {
+                icon.className = 'fas fa-moon';
+                themeToggle.title = 'Switch to Dark Mode';
+            }
+        }
+    }
+    
     // Loading state for buttons
     const submitButtons = document.querySelectorAll('button[type="submit"]');
     submitButtons.forEach(function(button) {

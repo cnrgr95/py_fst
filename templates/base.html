@@ -13,6 +13,391 @@
     <link href="{{ url_for('static', filename='css/sidebar.css') }}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/topbar.css') }}" rel="stylesheet">
     {% endif %}
+    
+    <!-- Dark Mode CSS Variables -->
+    <style>
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-tertiary: #e9ecef;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --text-muted: #adb5bd;
+            --border-color: #dee2e6;
+            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            --card-bg: #ffffff;
+            --input-bg: #ffffff;
+            --table-bg: #ffffff;
+            --table-hover: #f8f9fa;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3d3d3d;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #808080;
+            --border-color: #404040;
+            --shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.3);
+            --card-bg: #2d2d2d;
+            --input-bg: #3d3d3d;
+            --table-bg: #2d2d2d;
+            --table-hover: #3d3d3d;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .table {
+            color: var(--text-primary);
+        }
+        
+        .table-striped > tbody > tr:nth-of-type(odd) > td,
+        .table-striped > tbody > tr:nth-of-type(odd) > th {
+            background-color: var(--table-hover);
+        }
+        
+        .form-control {
+            background-color: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .form-control:focus {
+            background-color: var(--input-bg);
+            border-color: var(--sidebar-active);
+            color: var(--text-primary);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .form-label {
+            color: var(--text-primary);
+        }
+        
+        .text-muted {
+            color: var(--text-muted) !important;
+        }
+        
+        .text-secondary {
+            color: var(--text-secondary) !important;
+        }
+        
+        .border {
+            border-color: var(--border-color) !important;
+        }
+        
+        .alert {
+            border-color: var(--border-color);
+        }
+        
+        .modal-content {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        
+        .modal-header {
+            border-bottom-color: var(--border-color);
+        }
+        
+        .modal-footer {
+            border-top-color: var(--border-color);
+        }
+        
+        .btn-outline-secondary {
+            color: var(--text-secondary);
+            border-color: var(--border-color);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .dropdown-menu {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        
+        .dropdown-item {
+            color: var(--text-primary);
+        }
+        
+        .dropdown-item:hover {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .dropdown-header {
+            color: var(--text-secondary);
+        }
+        
+        .dropdown-divider {
+            border-top-color: var(--border-color);
+        }
+        
+        /* Additional dark mode fixes */
+        .bg-light {
+            background-color: var(--bg-secondary) !important;
+        }
+        
+        .bg-white {
+            background-color: var(--card-bg) !important;
+        }
+        
+        .text-white {
+            color: var(--text-primary) !important;
+        }
+        
+        .border-light {
+            border-color: var(--border-color) !important;
+        }
+        
+        .shadow {
+            box-shadow: var(--shadow) !important;
+        }
+        
+        .shadow-sm {
+            box-shadow: 0 0.125rem 0.25rem var(--shadow) !important;
+        }
+        
+        .shadow-lg {
+            box-shadow: 0 1rem 3rem var(--shadow) !important;
+        }
+        
+        /* Bootstrap table dark mode fixes */
+        .table-responsive {
+            background-color: var(--table-bg);
+            border-radius: 0.375rem;
+            border: 1px solid var(--border-color);
+        }
+        
+        .table-dark {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .table-dark th,
+        .table-dark td {
+            border-color: var(--border-color);
+        }
+        
+        /* Bootstrap form dark mode fixes */
+        .form-select {
+            background-color: var(--input-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .form-select:focus {
+            border-color: var(--sidebar-active);
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+        
+        .form-check-input {
+            background-color: var(--input-bg);
+            border-color: var(--border-color);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--sidebar-active);
+            border-color: var(--sidebar-active);
+        }
+        
+        /* Bootstrap button dark mode fixes */
+        .btn-light {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .btn-light:hover {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .btn-dark {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .btn-dark:hover {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        /* Bootstrap nav dark mode fixes */
+        .nav-link {
+            color: var(--text-primary);
+        }
+        
+        .nav-link:hover {
+            color: var(--sidebar-active);
+        }
+        
+        .nav-link.active {
+            color: var(--sidebar-active);
+        }
+        
+        /* Bootstrap list group dark mode fixes */
+        .list-group-item {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .list-group-item:hover {
+            background-color: var(--bg-tertiary);
+        }
+        
+        .list-group-item.active {
+            background-color: var(--sidebar-active);
+            border-color: var(--sidebar-active);
+        }
+        
+        /* Bootstrap progress dark mode fixes */
+        .progress {
+            background-color: var(--bg-tertiary);
+        }
+        
+        .progress-bar {
+            background-color: var(--sidebar-active);
+        }
+        
+        /* Bootstrap pagination dark mode fixes */
+        .pagination .page-link {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .pagination .page-link:hover {
+            background-color: var(--bg-tertiary);
+            border-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: var(--sidebar-active);
+            border-color: var(--sidebar-active);
+        }
+        
+        /* Bootstrap breadcrumb dark mode fixes */
+        .breadcrumb {
+            background-color: var(--bg-secondary);
+        }
+        
+        .breadcrumb-item a {
+            color: var(--sidebar-active);
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--text-secondary);
+        }
+        
+        /* Bootstrap card dark mode fixes */
+        .card-header {
+            background-color: var(--bg-secondary);
+            border-bottom-color: var(--border-color);
+        }
+        
+        .card-footer {
+            background-color: var(--bg-secondary);
+            border-top-color: var(--border-color);
+        }
+        
+        /* Bootstrap accordion dark mode fixes */
+        .accordion-item {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        
+        .accordion-header .accordion-button {
+            background-color: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+        
+        .accordion-header .accordion-button:not(.collapsed) {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .accordion-body {
+            background-color: var(--card-bg);
+            color: var(--text-primary);
+        }
+        
+        /* Bootstrap carousel dark mode fixes */
+        .carousel-indicators [data-bs-target] {
+            background-color: var(--text-muted);
+        }
+        
+        .carousel-indicators .active {
+            background-color: var(--sidebar-active);
+        }
+        
+        /* Bootstrap tooltip dark mode fixes */
+        .tooltip .tooltip-inner {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        .tooltip .tooltip-arrow::before {
+            border-color: var(--bg-tertiary);
+        }
+        
+        /* Bootstrap popover dark mode fixes */
+        .popover {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+        
+        .popover-header {
+            background-color: var(--bg-secondary);
+            border-bottom-color: var(--border-color);
+            color: var(--text-primary);
+        }
+        
+        .popover-body {
+            color: var(--text-primary);
+        }
+        
+        /* Bootstrap offcanvas dark mode fixes */
+        .offcanvas {
+            background-color: var(--card-bg);
+        }
+        
+        .offcanvas-header {
+            border-bottom-color: var(--border-color);
+        }
+        
+        .offcanvas-body {
+            color: var(--text-primary);
+        }
+    </style>
+    
+    <!-- Prevent theme flash by loading theme before page render -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            }
+        })();
+    </script>
 </head>
 <body>
     {% if session.user_id %}
@@ -44,12 +429,6 @@
             {% block content %}{% endblock %}
         </main>
 
-        <!-- Footer -->
-        <footer class="footer mt-auto py-3 bg-light text-center text-muted">
-            <div class="container">
-                <p class="mb-0">&copy; 2024 FST. All rights reserved.</p>
-            </div>
-        </footer>
     </div>
 
     <!-- Scripts -->

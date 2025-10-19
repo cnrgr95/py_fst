@@ -107,7 +107,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const sidebarLockToggle = document.getElementById('sidebarLockToggle');
     
     if (sidebarLockToggle) {
-        sidebarLockToggle.addEventListener('click', function() {
+        sidebarLockToggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
             sidebar.classList.toggle('locked');
             this.classList.toggle('locked');
             
@@ -118,6 +121,20 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update aria-pressed attribute
             this.setAttribute('aria-pressed', isLocked.toString());
             
+            // Update icon visibility
+            const unlockIcon = this.querySelector('.fa-unlock-alt');
+            const lockIcon = this.querySelector('.fa-lock');
+            
+            if (isLocked) {
+                if (unlockIcon) unlockIcon.style.display = 'none';
+                if (lockIcon) lockIcon.style.display = 'inline-block';
+                this.title = 'Unpin Sidebar';
+            } else {
+                if (unlockIcon) unlockIcon.style.display = 'inline-block';
+                if (lockIcon) lockIcon.style.display = 'none';
+                this.title = 'Pin Sidebar Open';
+            }
+            
             // Handle dropdown transitions during lock toggle
             handleDropdownTransitions(isLocked);
         });
@@ -125,10 +142,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Dropdown transition handler function
     function handleDropdownTransitions(isLocked) {
-        const collapseTriggers = document.querySelectorAll('[data-toggle="collapse"]');
+        const collapseTriggers = document.querySelectorAll('[data-bs-toggle="collapse"]');
         
         collapseTriggers.forEach(trigger => {
-            const targetId = trigger.getAttribute('data-target');
+            const targetId = trigger.getAttribute('data-bs-target');
             const target = document.querySelector(targetId);
             
             if (target) {
@@ -152,6 +169,14 @@ document.addEventListener('DOMContentLoaded', function() {
         if (sidebarLockToggle) {
             sidebarLockToggle.classList.add('locked');
             sidebarLockToggle.setAttribute('aria-pressed', 'true');
+            
+            // Update icon visibility for restored state
+            const unlockIcon = sidebarLockToggle.querySelector('.fa-unlock-alt');
+            const lockIcon = sidebarLockToggle.querySelector('.fa-lock');
+            
+            if (unlockIcon) unlockIcon.style.display = 'none';
+            if (lockIcon) lockIcon.style.display = 'inline-block';
+            sidebarLockToggle.title = 'Unpin Sidebar';
         }
         // Handle dropdown transitions on page load
         handleDropdownTransitions(true);
@@ -204,14 +229,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Enhanced dropdown toggle functionality
-    const collapseTriggers = document.querySelectorAll('[data-toggle="collapse"]');
+    const collapseTriggers = document.querySelectorAll('[data-bs-toggle="collapse"]');
     
     collapseTriggers.forEach(trigger => {
         trigger.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             
-            const targetId = this.getAttribute('data-target');
+            const targetId = this.getAttribute('data-bs-target');
             const target = document.querySelector(targetId);
             
             if (target) {
@@ -223,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (!isSidebarLocked) {
                     collapseTriggers.forEach(otherTrigger => {
                         if (otherTrigger !== trigger) {
-                            const otherTargetId = otherTrigger.getAttribute('data-target');
+                            const otherTargetId = otherTrigger.getAttribute('data-bs-target');
                             const otherTarget = document.querySelector(otherTargetId);
                             if (otherTarget && otherTarget.classList.contains('show')) {
                                 otherTarget.classList.remove('show');
@@ -275,12 +300,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } 
         // Desktop: Close dropdowns when clicking outside (except when locked)
         else if (!isSidebarLocked) {
-            if (!e.target.closest('[data-toggle="collapse"]') && 
+            if (!e.target.closest('[data-bs-toggle="collapse"]') && 
                 !e.target.closest('.collapse') && 
                 !e.target.closest('.sidebar')) {
                 setTimeout(() => {
                     collapseTriggers.forEach(trigger => {
-                        const targetId = trigger.getAttribute('data-target');
+                        const targetId = trigger.getAttribute('data-bs-target');
                         const target = document.querySelector(targetId);
                         if (target && target.classList.contains('show')) {
                             target.classList.remove('show');
@@ -309,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 // Desktop: Close all open dropdowns
                 collapseTriggers.forEach(trigger => {
-                    const targetId = trigger.getAttribute('data-target');
+                    const targetId = trigger.getAttribute('data-bs-target');
                     const target = document.querySelector(targetId);
                     if (target && target.classList.contains('show')) {
                         target.classList.remove('show');
@@ -335,9 +360,9 @@ document.addEventListener('DOMContentLoaded', function() {
     sidebar.addEventListener('mouseleave', function() {
         if (!sidebar.classList.contains('locked')) {
             // Close any open dropdowns when leaving sidebar (unless locked)
-            const collapseTriggers = document.querySelectorAll('[data-toggle="collapse"]');
+            const collapseTriggers = document.querySelectorAll('[data-bs-toggle="collapse"]');
             collapseTriggers.forEach(trigger => {
-                const targetId = trigger.getAttribute('data-target');
+                const targetId = trigger.getAttribute('data-bs-target');
                 const target = document.querySelector(targetId);
                 if (target && target.classList.contains('show')) {
                     target.classList.remove('show');
