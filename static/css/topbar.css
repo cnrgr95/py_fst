@@ -1,32 +1,45 @@
-/* Topbar Styles */
-.topbar {
-    position: fixed;
-    top: 0;
-    left: var(--sidebar-collapsed-width);
-    right: 0;
-    height: var(--topbar-height);
-    background-color: var(--sidebar-bg);
-    border-bottom: 1px solid var(--sidebar-border);
-    border-left: 1px solid var(--sidebar-border);
-    box-shadow: var(--sidebar-shadow);
-    z-index: 1001;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 1.5rem;
-    transition: all 0.3s ease;
+/* Topbar Styles - Sidebar ile Birleşik Tasarım */
+
+/* CSS Variables - Sidebar ile aynı (!important ile override) */
+:root {
+    --sidebar-width: 260px !important;
+    --sidebar-header-height: 72px !important;
+    --sidebar-bg: #ffffff !important;
+    --sidebar-border: #e9ecef !important;
+    --sidebar-text: #495057 !important;
+    --sidebar-hover: #f8f9fc !important;
+    --sidebar-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* Topbar when sidebar is hovered */
-.sidebar:hover ~ .topbar {
-    left: var(--sidebar-width);
+/* Dark Theme Variables - Sidebar ile aynı (!important ile override) */
+[data-theme="dark"] {
+    --sidebar-bg: #2d3748 !important;
+    --sidebar-border: #4a5568 !important;
+    --sidebar-text: #e2e8f0 !important;
+    --sidebar-hover: #4a5568 !important;
+    --sidebar-shadow: 0 0 15px rgba(0, 0, 0, 0.3) !important;
 }
 
-/* Topbar when sidebar is locked */
-.sidebar.locked ~ .topbar {
-    left: var(--sidebar-width);
+/* Topbar Container - Sidebar ile aynı stil (Yüksek specificity) */
+body .topbar {
+    position: fixed !important;
+    top: 0 !important;
+    left: var(--sidebar-width) !important;
+    right: 0 !important;
+    height: var(--sidebar-header-height) !important;
+    background-color: var(--sidebar-bg) !important;
+    border-bottom: 1px solid var(--sidebar-border) !important;
+    border-left: 1px solid var(--sidebar-border) !important;
+    box-shadow: var(--sidebar-shadow) !important;
+    z-index: 1000 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 1.5rem !important;
+    transition: all 0.3s ease !important;
 }
 
+/* Topbar Sections */
 .topbar-left {
     display: flex;
     align-items: center;
@@ -34,7 +47,7 @@
 }
 
 .topbar-center {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     flex: 1;
@@ -49,227 +62,124 @@
 .topbar-logo-img {
     height: 32px;
     width: auto;
-    max-width: 100%;
-}
-
-.sidebar-collapse-toggle {
-    background: none;
-    border: none;
-    color: var(--sidebar-text, #495057);
-    font-size: 1.1rem;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.sidebar-collapse-toggle:hover {
-    background-color: var(--sidebar-hover, #f8f9fc);
-    color: var(--sidebar-active, #4e73df);
 }
 
 .topbar-right {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    margin-left: auto;
 }
 
-/* Sidebar Toggle Button */
-.sidebar-toggle {
-    background: none;
-    border: none;
-    color: var(--sidebar-text);
-    font-size: 1.2rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Theme Toggle - Sidebar butonları ile aynı stil (Yüksek specificity) */
+body .theme-toggle .btn {
+    background: none !important;
+    border: 1px solid var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
+    padding: 0.5rem !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
 }
 
-.sidebar-toggle:hover {
-    background-color: var(--sidebar-hover);
-    color: var(--sidebar-active);
+body .theme-toggle .btn:hover {
+    background-color: var(--sidebar-hover) !important;
+    border-color: var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
 }
 
-/* Topbar Title */
-.topbar-title h4 {
-    color: var(--sidebar-text);
-    font-weight: 600;
-    margin: 0;
+/* Fullscreen Toggle - Sidebar butonları ile aynı stil (Yüksek specificity) */
+body .fullscreen-toggle .btn {
+    background: none !important;
+    border: 1px solid var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
+    padding: 0.5rem !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Theme Toggle */
-.theme-toggle .btn {
-    border: 1px solid var(--sidebar-border);
-    color: var(--sidebar-text);
-    background-color: transparent;
-    transition: all 0.2s ease;
+body .fullscreen-toggle .btn:hover {
+    background-color: var(--sidebar-hover) !important;
+    border-color: var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
 }
 
-.theme-toggle .btn:hover {
-    background-color: var(--sidebar-hover);
-    border-color: var(--sidebar-active);
-    color: var(--sidebar-active);
+/* Language Dropdown - Sidebar butonları ile aynı stil (Yüksek specificity) */
+body .language-dropdown .btn {
+    background: none !important;
+    border: 1px solid var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
+    padding: 0.5rem !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
 }
 
-[data-theme="dark"] .theme-toggle .btn i.fa-moon {
-    color: #ffd700;
+body .language-dropdown .btn:hover {
+    background-color: var(--sidebar-hover) !important;
+    border-color: var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
 }
 
-[data-theme="light"] .theme-toggle .btn i.fa-sun {
-    color: #ff8c00;
+body .language-dropdown .dropdown-menu {
+    background-color: var(--sidebar-bg) !important;
+    border-color: var(--sidebar-border) !important;
+    box-shadow: var(--sidebar-shadow) !important;
 }
 
-/* Fullscreen Toggle */
-.fullscreen-toggle .btn {
-    border: 1px solid var(--sidebar-border);
-    color: var(--sidebar-text);
-    background-color: transparent;
-    transition: all 0.2s ease;
+body .language-dropdown .dropdown-item {
+    color: var(--sidebar-text) !important;
+    transition: all 0.3s ease !important;
 }
 
-.fullscreen-toggle .btn:hover {
-    background-color: var(--sidebar-hover);
-    border-color: var(--sidebar-active);
-    color: var(--sidebar-active);
+body .language-dropdown .dropdown-item:hover {
+    background-color: var(--sidebar-hover) !important;
+    color: var(--sidebar-text) !important;
 }
 
-/* Language Dropdown */
-.language-dropdown {
-    position: relative;
+/* User Dropdown - Sidebar butonları ile aynı stil (Yüksek specificity) */
+body .user-dropdown .btn {
+    background: none !important;
+    border: 1px solid var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
+    padding: 0.5rem !important;
+    border-radius: 4px !important;
+    transition: all 0.3s ease !important;
 }
 
-.language-dropdown .dropdown-toggle {
-    border: 1px solid var(--sidebar-border);
-    color: var(--sidebar-text);
-    background-color: transparent;
-    transition: all 0.2s ease;
+body .user-dropdown .btn:hover {
+    background-color: var(--sidebar-hover) !important;
+    border-color: var(--sidebar-border) !important;
+    color: var(--sidebar-text) !important;
 }
 
-.language-dropdown .dropdown-toggle:hover {
-    background-color: var(--sidebar-hover);
-    border-color: var(--sidebar-active);
-    color: var(--sidebar-active);
+body .user-dropdown .dropdown-menu {
+    background-color: var(--sidebar-bg) !important;
+    border-color: var(--sidebar-border) !important;
+    box-shadow: var(--sidebar-shadow) !important;
 }
 
-.language-dropdown .dropdown-menu {
-    border: 1px solid var(--sidebar-border);
-    background-color: var(--sidebar-bg);
-    box-shadow: var(--sidebar-shadow);
-    width: 100%;
-    min-width: unset;
-    max-width: 100%;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    transform: translateY(0);
+body .user-dropdown .dropdown-item {
+    color: var(--sidebar-text) !important;
+    transition: all 0.3s ease !important;
 }
 
-/* Responsive dil dropdown */
+body .user-dropdown .dropdown-item:hover {
+    background-color: var(--sidebar-hover) !important;
+    color: var(--sidebar-text) !important;
+}
+
+body .user-dropdown .dropdown-header {
+    color: var(--sidebar-text) !important;
+    font-weight: 600 !important;
+}
+
+/* Mobile Styles (Yüksek specificity) */
 @media (max-width: 991.98px) {
-    .language-dropdown .dropdown-menu {
-        position: fixed;
-        top: auto;
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-        width: auto;
-        min-width: 120px;
-        max-width: 200px;
-    }
-}
-
-.language-dropdown .dropdown-item {
-    color: var(--sidebar-text);
-    padding: 0.5rem 1rem;
-    min-height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    text-align: right;
-    transition: all 0.2s ease;
-}
-
-.language-dropdown .dropdown-item:hover {
-    background-color: var(--sidebar-hover);
-    color: var(--sidebar-active);
-}
-
-/* User Dropdown */
-.user-dropdown {
-    position: relative;
-}
-
-.user-dropdown .dropdown-toggle {
-    border: 1px solid var(--sidebar-active);
-    color: var(--sidebar-active);
-    background-color: transparent;
-    transition: all 0.2s ease;
-}
-
-.user-dropdown .dropdown-toggle:hover {
-    background-color: var(--sidebar-active);
-    color: white;
-}
-
-.user-dropdown .dropdown-menu {
-    border: 1px solid var(--sidebar-border);
-    background-color: var(--sidebar-bg);
-    box-shadow: var(--sidebar-shadow);
-    min-width: 200px;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    z-index: 1000;
-    transform: translateY(0);
-}
-
-.user-dropdown .dropdown-item {
-    color: var(--sidebar-text);
-    transition: all 0.2s ease;
-}
-
-.user-dropdown .dropdown-item:hover {
-    background-color: var(--sidebar-hover);
-    color: var(--sidebar-active);
-}
-
-.user-dropdown .dropdown-header {
-    color: var(--sidebar-text);
-    font-weight: 600;
-    font-size: 0.875rem;
-}
-
-/* Responsive Design */
-@media (max-width: 991.98px) {
-    .topbar {
+    body .topbar {
         left: 0 !important;
-    }
-    
-    .topbar-center {
-        display: flex;
-    }
-    
-    /* Prevent topbar from shifting when sidebar expands */
-    .sidebar:hover ~ .topbar,
-    .sidebar.locked ~ .topbar {
-        left: 0 !important;
+        padding: 0 1rem !important;
+        border-left: none !important;
     }
 }
-
-@media (max-width: 767.98px) {
-    .topbar {
-        padding: 0 1rem;
-    }
-    
-    .topbar-title {
-        display: none;
-    }
     
     .topbar-center {
         display: none;
@@ -279,73 +189,40 @@
         gap: 0.5rem;
     }
     
-    .theme-toggle .btn,
-    .fullscreen-toggle .btn,
-    .language-dropdown .dropdown-toggle,
-    .user-dropdown .dropdown-toggle {
-        padding: 0.375rem 0.75rem;
-        font-size: 0.875rem;
+    .fullscreen-toggle {
+        display: none;
+    }
+    
+    .language-dropdown .btn span {
+        display: none;
+    }
+    
+    .user-dropdown .btn span {
+        display: none;
     }
 }
 
-@media (max-width: 575.98px) {
+/* Small Mobile Styles */
+@media (max-width: 576px) {
+    .topbar {
+        padding: 0 0.75rem;
+    }
+    
     .topbar-right {
         gap: 0.25rem;
     }
     
     .theme-toggle .btn,
-    .fullscreen-toggle .btn,
-    .language-dropdown .dropdown-toggle,
-    .user-dropdown .dropdown-toggle {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.8rem;
-    }
-    
-    .language-dropdown .dropdown-toggle span,
-    .user-dropdown .dropdown-toggle span {
-        display: none;
+    .language-dropdown .btn,
+    .user-dropdown .btn {
+        padding: 0.375rem 0.5rem;
+        font-size: 0.875rem;
     }
 }
 
-/* Main Content Top Padding */
-.main-content {
-    padding-top: calc(var(--topbar-height) + 5px);
-}
-
-/* Animation for theme toggle */
-.theme-toggle .btn i {
-    transition: all 0.3s ease;
-}
-
-/* Dropdown animations */
-.dropdown-menu {
-    animation: fadeInDown 0.2s ease;
-}
-
-/* Fix dropdown positioning issues */
-.dropdown-menu.show {
-    position: absolute !important;
-    transform: translateY(0) !important;
-    top: 100% !important;
-}
-
-@keyframes fadeInDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
+/* Prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .topbar {
+        transition: none !important;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Focus states */
-.sidebar-toggle:focus,
-.theme-toggle .btn:focus,
-.fullscreen-toggle .btn:focus,
-.language-dropdown .dropdown-toggle:focus,
-.user-dropdown .dropdown-toggle:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.25);
 }

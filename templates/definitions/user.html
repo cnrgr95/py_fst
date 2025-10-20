@@ -4,6 +4,7 @@
 
 {% block page_css %}
 <link href="{{ url_for('static', filename='css/definitions/user.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/definitions/user_permissions.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -35,8 +36,13 @@
                         <tr>
                             <th>{{ translations.id or 'ID' }}</th>
                             <th>{{ translations.username or 'Username' }}</th>
+                            <th>{{ translations.first_name or 'First Name' }}</th>
+                            <th>{{ translations.last_name or 'Last Name' }}</th>
                             <th>{{ translations.email or 'Email' }}</th>
-                            <th>{{ translations.full_name or 'Full Name' }}</th>
+                            <th>{{ translations.country or 'Country' }}</th>
+                            <th>{{ translations.region or 'Region' }}</th>
+                            <th>{{ translations.department or 'Department' }}</th>
+                            <th>{{ translations.position or 'Position' }}</th>
                             <th>{{ translations.status or 'Status' }}</th>
                             <th>{{ translations.created_at or 'Created At' }}</th>
                             <th>{{ translations.last_login or 'Last Login' }}</th>
@@ -49,8 +55,13 @@
                             <tr>
                                 <td>{{ user.id }}</td>
                                 <td>{{ user.username }}</td>
+                                <td>{{ user.first_name or '-' }}</td>
+                                <td>{{ user.last_name or '-' }}</td>
                                 <td>{{ user.email }}</td>
-                                <td>{{ user.full_name }}</td>
+                                <td>{{ user.country or '-' }}</td>
+                                <td>{{ user.region or '-' }}</td>
+                                <td>{{ user.department or '-' }}</td>
+                                <td>{{ user.position or '-' }}</td>
                                 <td>
                                     {% if user.is_active %}
                                         <span class="badge bg-success">{{ translations.active or 'Active' }}</span>
@@ -93,19 +104,58 @@
                 <h5 class="modal-title" id="userModalLabel">{{ translations.add_new_user or 'Add New User' }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="userForm">
+            <form id="userForm" action="{{ url_for('add_user') }}" method="POST">
+                {{ csrf_token() }}
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="username" class="form-label">{{ translations.username or 'Username' }}</label>
                         <input type="text" class="form-control" id="username" name="username" required>
                     </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">{{ translations.first_name or 'First Name' }}</label>
+                                <input type="text" class="form-control" id="firstName" name="first_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="lastName" class="form-label">{{ translations.last_name or 'Last Name' }}</label>
+                                <input type="text" class="form-control" id="lastName" name="last_name" required>
+                            </div>
+                        </div>
+                    </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">{{ translations.email or 'Email' }}</label>
                         <input type="email" class="form-control" id="email" name="email" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="fullName" class="form-label">{{ translations.full_name or 'Full Name' }}</label>
-                        <input type="text" class="form-control" id="fullName" name="full_name" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="country" class="form-label">{{ translations.country or 'Country' }}</label>
+                                <input type="text" class="form-control" id="country" name="country">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="region" class="form-label">{{ translations.region or 'Region' }}</label>
+                                <input type="text" class="form-control" id="region" name="region">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="department" class="form-label">{{ translations.department or 'Department' }}</label>
+                                <input type="text" class="form-control" id="department" name="department">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="position" class="form-label">{{ translations.position or 'Position' }}</label>
+                                <input type="text" class="form-control" id="position" name="position">
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">{{ translations.password or 'Password' }}</label>
@@ -141,20 +191,60 @@
                 <h5 class="modal-title" id="editUserModalLabel">{{ translations.edit_user or 'Edit User' }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="editUserForm">
+            <form id="editUserForm" action="{{ url_for('edit_user') }}" method="POST">
+                {{ csrf_token() }}
                 <input type="hidden" id="editUserId" name="user_id">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="editUsername" class="form-label">{{ translations.username or 'Username' }}</label>
-                        <input type="text" class="form-control" id="editUsername" name="username" required>
+                        <input type="text" class="form-control" id="editUsername" name="username" required readonly>
+                        <small class="form-text text-muted">{{ translations.username_cannot_be_changed or 'Username cannot be changed' }}</small>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editFirstName" class="form-label">{{ translations.first_name or 'First Name' }}</label>
+                                <input type="text" class="form-control" id="editFirstName" name="first_name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editLastName" class="form-label">{{ translations.last_name or 'Last Name' }}</label>
+                                <input type="text" class="form-control" id="editLastName" name="last_name" required>
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="editEmail" class="form-label">{{ translations.email or 'Email' }}</label>
                         <input type="email" class="form-control" id="editEmail" name="email" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="editFullName" class="form-label">{{ translations.full_name or 'Full Name' }}</label>
-                        <input type="text" class="form-control" id="editFullName" name="full_name" required>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editCountry" class="form-label">{{ translations.country or 'Country' }}</label>
+                                <input type="text" class="form-control" id="editCountry" name="country">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editRegion" class="form-label">{{ translations.region or 'Region' }}</label>
+                                <input type="text" class="form-control" id="editRegion" name="region">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editDepartment" class="form-label">{{ translations.department or 'Department' }}</label>
+                                <input type="text" class="form-control" id="editDepartment" name="department">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="editPosition" class="form-label">{{ translations.position or 'Position' }}</label>
+                                <input type="text" class="form-control" id="editPosition" name="position">
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="editPassword" class="form-label">{{ translations.new_password or 'New Password (leave blank to keep current)' }}</label>
@@ -178,6 +268,85 @@
                     <button type="submit" class="btn btn-primary">{{ translations.update_user or 'Update User' }}</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- User Permissions Modal -->
+<div class="modal fade" id="userPermissionsModal" tabindex="-1" aria-labelledby="userPermissionsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userPermissionsModalLabel">
+                    <i class="fas fa-key me-2"></i>
+                    {{ translations.user_permissions or 'User Permissions' }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="permissionsModalBody">
+                <!-- User Info -->
+                <div class="user-info-card mb-4" id="permissionsUserInfo">
+                    <div class="user-info-body">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <div class="user-avatar">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="user-details">
+                                    <h4 id="permissionsUserName"></h4>
+                                    <p><strong>{{ translations.username or 'Username' }}:</strong> <span id="permissionsUserUsername"></span></p>
+                                    <p><strong>{{ translations.email or 'Email' }}:</strong> <span id="permissionsUserEmail"></span></p>
+                                    <small id="permissionsUserStatus"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Permission Statistics -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-chart-pie me-2"></i>
+                            {{ translations.permission_statistics or 'Permission Statistics' }}
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="module-stats" id="permissionStats">
+                            <!-- Stats will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Permissions -->
+                <div class="card shadow">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">
+                            <i class="fas fa-key me-2"></i>
+                            {{ translations.user_permissions or 'User Permissions' }}
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="permissions-container" id="permissionsContainer">
+                            <div class="text-center py-5">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">{{ translations.loading or 'Loading...' }}</span>
+                                </div>
+                                <p class="mt-3 text-muted">{{ translations.loading_permissions or 'Loading permissions...' }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ translations.close or 'Close' }}</button>
+                <button type="button" class="btn btn-primary" id="savePermissionsBtn">
+                    <i class="fas fa-save me-2"></i>
+                    {{ translations.save_permissions or 'Save Permissions' }}
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -210,5 +379,8 @@ window.translations = {
     password_min_length: "{{ translations.password_min_length or 'Password must be at least 6 characters long' }}",
     password_mismatch: "{{ translations.password_mismatch or 'Passwords do not match' }}"
 };
+
+// Initialize users data for JavaScript
+window.usersData = JSON.parse('{{ users | tojson | safe }}');
 </script>
 {% endblock %}

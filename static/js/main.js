@@ -1,24 +1,7 @@
 // Ana JavaScript dosyası
 document.addEventListener('DOMContentLoaded', function() {
     
-    // Sidebar toggle for mobile
-    const sidebarToggle = document.getElementById('sidebarToggle');
-    const sidebar = document.querySelector('.sidebar');
-    
-    if (sidebarToggle) {
-        sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('show');
-        });
-    }
-    
-    // Close sidebar when clicking outside on mobile
-    document.addEventListener('click', function(event) {
-        if (window.innerWidth <= 768 && sidebar && sidebarToggle) {
-            if (!sidebar.contains(event.target) && !sidebarToggle.contains(event.target)) {
-                sidebar.classList.remove('show');
-            }
-        }
-    });
+    // Sidebar functionality is handled by sidebar.js
     
     // Auto-hide alerts after 5 seconds
     const alerts = document.querySelectorAll('.alert');

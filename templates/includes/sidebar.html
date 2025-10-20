@@ -1,5 +1,5 @@
 <!-- Mobile Sidebar Toggle Button -->
-<button class="sidebar-toggle-mobile" id="sidebarToggleMobile" aria-label="Toggle sidebar">
+<button class="sidebar-toggle-mobile js-sidebar-toggle" type="button" aria-label="Toggle sidebar">
     <i class="fas fa-bars"></i>
 </button>
 
@@ -7,109 +7,116 @@
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div class="sidebar-brand">
-            <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="sidebar-logo">
+            <a href="{{ url_for('dashboard') }}" class="sidebar-logo-link">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="Logo" class="sidebar-logo">
+            </a>
         </div>
-        <div class="sidebar-header-buttons">
-            <button class="sidebar-lock-toggle d-none d-lg-block" id="sidebarLockToggle" aria-pressed="false" aria-label="Pin sidebar open" title="Pin Sidebar Open">
-                <i class="fas fa-unlock-alt"></i>
-                <i class="fas fa-lock" style="display: none;"></i>
-            </button>
-            <button class="sidebar-toggle d-lg-none" id="sidebarToggleClose" aria-label="Close sidebar">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
+        <button class="sidebar-toggle d-lg-none" id="sidebarToggleClose" aria-label="Close sidebar">
+            <i class="fas fa-times"></i>
+        </button>
     </div>
 
     <div class="sidebar-menu">
         <ul class="nav nav-pills flex-column">
             <!-- Dashboard -->
             <li class="nav-item">
-                <a class="nav-link {{ 'active' if request.endpoint == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}">
-                    <i class="fas fa-tachometer-alt"></i>
-                    <span>{{ translations.dashboard or 'Dashboard' }}</span>
+                <a class="nav-link {{ 'active' if request.endpoint == 'dashboard' else '' }}" 
+                   href="{{ url_for('dashboard') }}"
+                   {% if request.endpoint == 'dashboard' %} aria-current="page" {% endif %}>
+                    <i class="fas fa-tachometer-alt icon"></i>
+                    <span class="label">{{ translations.dashboard or 'Dashboard' }}</span>
                 </a>
             </li>
 
             <!-- Coast -->
             <li class="nav-item">
                 <a class="nav-link" href="javascript:void(0)">
-                    <i class="fas fa-calculator"></i>
-                    <span>{{ translations.coast or 'Coast' }}</span>
+                    <i class="fas fa-calculator icon"></i>
+                    <span class="label">{{ translations.coast or 'Coast' }}</span>
                 </a>
             </li>
 
             <!-- Tour List -->
             <li class="nav-item">
                 <a class="nav-link" href="javascript:void(0)">
-                    <i class="fas fa-route"></i>
-                    <span>{{ translations.tour_list or 'Tour List' }}</span>
+                    <i class="fas fa-route icon"></i>
+                    <span class="label">{{ translations.tour_list or 'Tour List' }}</span>
                 </a>
             </li>
+
             <!-- Tanımlamalar (Definitions) -->
             <li class="nav-item">
-                <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#definitionsCollapse" aria-controls="definitionsCollapse" aria-expanded="false">
-                    <i class="fas fa-cogs"></i>
-                    <span>{{ translations.definitions or 'Tanımlamalar' }}</span>
-                    <i class="fas fa-chevron-down ms-auto"></i>
-                </a>
+                <button class="nav-link dropdown-toggle" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#definitionsCollapse"
+                        aria-controls="definitionsCollapse" aria-expanded="false">
+                    <i class="fas fa-cogs icon"></i>
+                    <span class="label">{{ translations.definitions or 'Tanımlamalar' }}</span>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </button>
                 <div class="collapse" id="definitionsCollapse">
                     <ul class="nav nav-pills flex-column sub-menu">
                         <li class="nav-item">
-                            <a class="nav-link {{ 'active' if request.endpoint == 'users' else '' }}" href="{{ url_for('users') }}">
-                                <i class="fas fa-users"></i>
-                                <span>{{ translations.users or 'Kullanıcılar' }}</span>
+                            <a class="nav-link {{ 'active' if request.endpoint == 'users' else '' }}" 
+                               href="{{ url_for('users') }}"
+                               {% if request.endpoint == 'users' %} aria-current="page" {% endif %}>
+                                <i class="fas fa-users icon"></i>
+                                <span class="label">{{ translations.users or 'Kullanıcılar' }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0)">
-                                <i class="fas fa-route"></i>
-                                <span>{{ translations.tours or 'Turlar' }}</span>
+                                <i class="fas fa-route icon"></i>
+                                <span class="label">{{ translations.tours or 'Turlar' }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0)">
-                                <i class="fas fa-envelope"></i>
-                                <span>{{ translations.mail_settings or 'Malilet' }}</span>
+                                <i class="fas fa-envelope icon"></i>
+                                <span class="label">{{ translations.mail_settings or 'Mail Ayarları' }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0)">
-                                <i class="fas fa-globe"></i>
-                                <span>{{ translations.language or 'Dil' }}</span>
+                                <i class="fas fa-globe icon"></i>
+                                <span class="label">{{ translations.language or 'Dil' }}</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </li>
+
             <!-- Ayarlar (Settings) -->
             <li class="nav-item">
-                <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="collapse" data-bs-target="#settingsCollapse" aria-controls="settingsCollapse" aria-expanded="false">
-                    <i class="fas fa-cog"></i>
-                    <span>{{ translations.settings or 'Ayarlar' }}</span>
-                    <i class="fas fa-chevron-down ms-auto"></i>
-                </a>
+                <button class="nav-link dropdown-toggle" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#settingsCollapse"
+                        aria-controls="settingsCollapse" aria-expanded="false">
+                    <i class="fas fa-cog icon"></i>
+                    <span class="label">{{ translations.settings or 'Ayarlar' }}</span>
+                    <i class="fas fa-chevron-down chevron"></i>
+                </button>
                 <div class="collapse" id="settingsCollapse">
                     <ul class="nav nav-pills flex-column sub-menu">
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0)">
-                                <i class="fas fa-server"></i>
-                                <span>{{ translations.system_settings or 'Sistem ayarları' }}</span>
+                                <i class="fas fa-server icon"></i>
+                                <span class="label">{{ translations.system_settings or 'Sistem Ayarları' }}</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="javascript:void(0)">
-                                <i class="fas fa-coins"></i>
-                                <span>{{ translations.cash or 'Cash' }}</span>
+                                <i class="fas fa-coins icon"></i>
+                                <span class="label">{{ translations.cash or 'Nakit' }}</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </li>
+
             <!-- Destek (Support) -->
             <li class="nav-item">
                 <a class="nav-link" href="javascript:void(0)">
-                    <i class="fas fa-life-ring"></i>
-                    <span>{{ translations.support or 'Destek' }}</span>
+                    <i class="fas fa-life-ring icon"></i>
+                    <span class="label">{{ translations.support or 'Destek' }}</span>
                 </a>
             </li>
         </ul>
@@ -118,13 +125,9 @@
     <!-- Sidebar Footer -->
     <div class="sidebar-footer">
         <div class="sidebar-footer-content">
-            <div class="sidebar-footer-text-wide">
+            <div class="sidebar-footer-text">
                 <span class="sidebar-footer-title">FST</span>
                 <span class="sidebar-footer-version">v1.0.0</span>
-            </div>
-            <div class="sidebar-footer-text-narrow">
-                <div class="sidebar-footer-title">FST</div>
-                <div class="sidebar-footer-version">v1.0.0</div>
             </div>
         </div>
     </div>

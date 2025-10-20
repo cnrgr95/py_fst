@@ -2,8 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect
 from flask_talisman import Talisman
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
 import psycopg2
 import psycopg2.extras
 import json
@@ -322,14 +320,6 @@ app.config.update(
 # CSRF koruması
 csrf = CSRFProtect(app)
 
-# Rate limiting
-limiter = Limiter(
-    get_remote_address,
-    app=app,
-    default_limits=[Config.RATELIMIT_DEFAULT],
-    storage_uri=Config.RATELIMIT_STORAGE_URL
-)
-
 # Güvenlik başlıkları (CSP)
 csp = {
     'default-src': ["'self'"],
@@ -460,7 +450,6 @@ def index():
         return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
 def login():
     """Login sayfası"""
     # Eğer kullanıcı zaten giriş yapmışsa dashboard'a yönlendir
@@ -555,7 +544,8 @@ def users():
     try:
         cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         cur.execute("""
-            SELECT id, username, email, full_name, is_active, created_at, last_login
+            SELECT id, username, email, first_name, last_name, full_name, 
+                   country, region, department, position, is_active, created_at, last_login
             FROM users
             ORDER BY created_at DESC
         """)
@@ -585,7 +575,7 @@ def change_language(lang):
 
 @app.route('/user_permissions/<int:user_id>')
 def user_permissions(user_id):
-    """Kullanıcı yetki yönetimi sayfası"""
+    """Kullanıcı yetki yönetimi sayfası - Popup'a yönlendir"""
     if not session.get('user_id'):
         return redirect(url_for('login'))
     
@@ -593,6 +583,19 @@ def user_permissions(user_id):
     if not has_permission(session.get('user_id'), 'user.edit'):
         flash('Bu sayfaya erişim yetkiniz yok!', 'error')
         return redirect(url_for('users'))
+    
+    # Users sayfasına yönlendir ve popup açılmasını sağla
+    return redirect(url_for('users') + f'#permissions-{user_id}')
+
+@app.route('/api/user_permissions/<int:user_id>')
+def api_user_permissions(user_id):
+    """API endpoint for user permissions data"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
     
     try:
         conn = get_db_connection()
@@ -606,20 +609,13 @@ def user_permissions(user_id):
         user = cursor.fetchone()
         
         if not user:
-            flash('Kullanıcı bulunamadı!', 'error')
-            return redirect(url_for('users'))
+            return jsonify({'success': False, 'message': 'Kullanıcı bulunamadı!'})
         
         # Kullanıcının mevcut yetkilerini getir
         user_permissions = get_user_permissions(user_id)
         
-        # Kullanıcının rollerini getir
-        user_roles = get_user_roles(user_id)
-        
         # Tüm yetkileri getir
         all_permissions = get_all_permissions()
-        
-        # Tüm rolleri getir
-        all_roles = get_all_roles()
         
         # Modüllere göre yetkileri grupla
         permissions_by_module = {}
@@ -629,18 +625,229 @@ def user_permissions(user_id):
                 permissions_by_module[module] = []
             permissions_by_module[module].append(perm)
         
-        return render_template('definitions/user_permissions.html',
-                             user=user,
-                             user_permissions=user_permissions,
-                             user_roles=user_roles,
-                             all_permissions=all_permissions,
-                             all_roles=all_roles,
-                             permissions_by_module=permissions_by_module)
+        return jsonify({
+            'success': True,
+            'data': {
+                'user': dict(user),
+                'user_permissions': user_permissions,
+                'permissions_by_module': permissions_by_module
+            }
+        })
         
     except Exception as e:
-        app.logger.error(f"Kullanıcı yetki sayfası hatası: {e}")
-        flash('Sayfa yüklenirken hata oluştu!', 'error')
-        return redirect(url_for('users'))
+        app.logger.error(f"API user permissions error: {e}")
+        return jsonify({'success': False, 'message': 'Veri yüklenirken hata oluştu!'})
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+@app.route('/api/user_permissions/<int:user_id>/assign', methods=['POST'])
+@csrf.exempt
+def api_assign_permission(user_id):
+    """API endpoint to assign permission to user"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        data = request.get_json()
+        permission_name = data.get('permission_name')
+        
+        app.logger.info(f"=== ASSIGN PERMISSION DEBUG ===")
+        app.logger.info(f"User ID: {user_id}")
+        app.logger.info(f"Permission Name: {permission_name}")
+        app.logger.info(f"Request Data: {data}")
+        
+        if not permission_name:
+            return jsonify({'success': False, 'message': 'Permission name is required!'})
+        
+        # Permission ID'yi bul
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT id FROM permissions WHERE name = %s", (permission_name,))
+        permission = cursor.fetchone()
+        
+        if not permission:
+            return jsonify({'success': False, 'message': 'Permission not found!'})
+        
+        permission_id = permission[0]
+        app.logger.info(f"Found permission ID: {permission_id} for permission: {permission_name}")
+        
+        # Kullanıcıya permission atanmış mı kontrol et
+        cursor.execute("""
+            SELECT COUNT(*) FROM user_permissions 
+            WHERE user_id = %s AND permission_id = %s
+        """, (user_id, permission_id))
+        
+        existing_count = cursor.fetchone()[0]
+        
+        if existing_count > 0:
+            # Permission zaten atanmış
+            return jsonify({'success': True, 'message': 'Permission was already assigned!'})
+        
+        # Permission ata
+        app.logger.info(f"Inserting permission - User ID: {user_id}, Permission ID: {permission_id}")
+        cursor.execute("""
+            INSERT INTO user_permissions (user_id, permission_id) 
+            VALUES (%s, %s)
+        """, (user_id, permission_id))
+        
+        conn.commit()
+        app.logger.info(f"Permission assigned successfully - User ID: {user_id}, Permission ID: {permission_id}")
+        
+        return jsonify({'success': True, 'message': 'Permission assigned successfully!'})
+        
+    except Exception as e:
+        app.logger.error(f"Permission assign error: {e}")
+        return jsonify({'success': False, 'message': 'Failed to assign permission!'})
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+@app.route('/api/user_permissions/<int:user_id>/batch', methods=['POST'])
+@csrf.exempt
+def api_batch_save_permissions(user_id):
+    """API endpoint to batch save user permissions"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        data = request.get_json()
+        changes = data.get('changes', [])
+        
+        app.logger.info(f"Batch save permissions - User ID: {user_id}, Changes: {len(changes)}")
+        
+        if not changes:
+            return jsonify({'success': True, 'message': 'No changes to save!'})
+        
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        success_count = 0
+        error_count = 0
+        
+        for change in changes:
+            permission_name = change.get('permission_name')
+            action = change.get('action')  # 'assign' or 'revoke'
+            
+            if not permission_name or not action:
+                error_count += 1
+                continue
+            
+            # Permission ID'yi bul
+            cursor.execute("SELECT id FROM permissions WHERE name = %s", (permission_name,))
+            permission = cursor.fetchone()
+            
+            if not permission:
+                app.logger.warning(f"Permission not found: {permission_name}")
+                error_count += 1
+                continue
+            
+            permission_id = permission[0]
+            
+            if action == 'assign':
+                # Permission ata
+                cursor.execute("""
+                    SELECT COUNT(*) FROM user_permissions 
+                    WHERE user_id = %s AND permission_id = %s
+                """, (user_id, permission_id))
+                
+                existing_count = cursor.fetchone()[0]
+                
+                if existing_count == 0:
+                    cursor.execute("""
+                        INSERT INTO user_permissions (user_id, permission_id) 
+                        VALUES (%s, %s)
+                    """, (user_id, permission_id))
+                    success_count += 1
+                    app.logger.info(f"Assigned permission: {permission_name}")
+                else:
+                    app.logger.info(f"Permission already assigned: {permission_name}")
+                    success_count += 1
+                    
+            elif action == 'revoke':
+                # Permission'ı kaldır
+                cursor.execute("""
+                    DELETE FROM user_permissions 
+                    WHERE user_id = %s AND permission_id = %s
+                """, (user_id, permission_id))
+                success_count += 1
+                app.logger.info(f"Revoked permission: {permission_name}")
+        
+        conn.commit()
+        
+        message = f"Permissions saved successfully! {success_count} changes applied."
+        if error_count > 0:
+            message += f" {error_count} errors occurred."
+        
+        return jsonify({'success': True, 'message': message})
+        
+    except Exception as e:
+        app.logger.error(f"Batch permission save error: {e}")
+        return jsonify({'success': False, 'message': 'Failed to save permissions!'})
+    finally:
+        if conn:
+            cursor.close()
+            conn.close()
+
+@app.route('/api/user_permissions/<int:user_id>/revoke', methods=['POST'])
+@csrf.exempt
+def api_revoke_permission(user_id):
+    """API endpoint to revoke permission from user"""
+    if not session.get('user_id'):
+        return jsonify({'success': False, 'message': 'Oturum açmanız gerekiyor!'})
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        return jsonify({'success': False, 'message': 'Bu işlem için yetkiniz yok!'})
+    
+    try:
+        data = request.get_json()
+        permission_name = data.get('permission_name')
+        
+        app.logger.info(f"=== REVOKE PERMISSION DEBUG ===")
+        app.logger.info(f"User ID: {user_id}")
+        app.logger.info(f"Permission Name: {permission_name}")
+        app.logger.info(f"Request Data: {data}")
+        
+        if not permission_name:
+            return jsonify({'success': False, 'message': 'Permission name is required!'})
+        
+        # Permission ID'yi bul
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT id FROM permissions WHERE name = %s", (permission_name,))
+        permission = cursor.fetchone()
+        
+        if not permission:
+            return jsonify({'success': False, 'message': 'Permission not found!'})
+        
+        permission_id = permission[0]
+        
+        # Permission'ı kaldır
+        cursor.execute("""
+            DELETE FROM user_permissions 
+            WHERE user_id = %s AND permission_id = %s
+        """, (user_id, permission_id))
+        
+        conn.commit()
+        
+        return jsonify({'success': True, 'message': 'Permission revoked successfully!'})
+        
+    except Exception as e:
+        app.logger.error(f"Permission revoke error: {e}")
+        return jsonify({'success': False, 'message': 'Failed to revoke permission!'})
     finally:
         if conn:
             cursor.close()
@@ -740,6 +947,167 @@ def remove_role():
 
 
 # Hata sayfaları
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    """Yeni kullanıcı ekle"""
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        flash('Bu işlem için yetkiniz yok!', 'error')
+        return redirect(url_for('users'))
+    
+    try:
+        username = request.form.get('username')
+        email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        country = request.form.get('country')
+        region = request.form.get('region')
+        department = request.form.get('department')
+        position = request.form.get('position')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        is_active = request.form.get('is_active') == 'on'
+        
+        # Validation
+        if not username or not email or not password:
+            flash('Kullanıcı adı, e-posta ve şifre gereklidir!', 'error')
+            return redirect(url_for('users'))
+        
+        if password != confirm_password:
+            flash('Şifreler eşleşmiyor!', 'error')
+            return redirect(url_for('users'))
+        
+        # Create full_name from first_name and last_name
+        full_name = f"{first_name} {last_name}".strip() if first_name or last_name else ''
+        
+        conn = get_db_connection()
+        if not conn:
+            flash('Database connection error!', 'error')
+            return redirect(url_for('users'))
+        
+        cur = conn.cursor()
+        
+        # Check if username or email already exists
+        cur.execute("SELECT id FROM users WHERE username = %s OR email = %s", (username, email))
+        if cur.fetchone():
+            flash('Bu kullanıcı adı veya e-posta zaten kullanılıyor!', 'error')
+            return redirect(url_for('users'))
+        
+        # Hash password
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        
+        # Insert new user
+        cur.execute("""
+            INSERT INTO users (username, email, password, first_name, last_name, full_name,
+                             country, region, department, position, is_active, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW())
+        """, (username, email, hashed_password, first_name, last_name, full_name,
+              country, region, department, position, is_active))
+        
+        conn.commit()
+        flash('Kullanıcı başarıyla eklendi!', 'success')
+        
+    except psycopg2.Error as e:
+        app.logger.error(f"Add user error: {e}")
+        flash('Kullanıcı eklenirken hata oluştu!', 'error')
+    except Exception as e:
+        app.logger.error(f"Add user error: {e}")
+        flash('Kullanıcı eklenirken hata oluştu!', 'error')
+    finally:
+        if conn:
+            conn.close()
+    
+    return redirect(url_for('users'))
+
+@app.route('/edit_user', methods=['POST'])
+def edit_user():
+    """Kullanıcı düzenle"""
+    if not session.get('user_id'):
+        return redirect(url_for('login'))
+    
+    # Yetki kontrolü
+    if not has_permission(session.get('user_id'), 'user.edit'):
+        flash('Bu işlem için yetkiniz yok!', 'error')
+        return redirect(url_for('users'))
+    
+    try:
+        user_id = request.form.get('user_id')
+        email = request.form.get('email')
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        country = request.form.get('country')
+        region = request.form.get('region')
+        department = request.form.get('department')
+        position = request.form.get('position')
+        password = request.form.get('password')
+        confirm_password = request.form.get('confirm_password')
+        is_active = request.form.get('is_active') == 'on'
+        
+        # Validation
+        if not user_id or not email:
+            flash('Kullanıcı ID ve e-posta gereklidir!', 'error')
+            return redirect(url_for('users'))
+        
+        if password and password != confirm_password:
+            flash('Şifreler eşleşmiyor!', 'error')
+            return redirect(url_for('users'))
+        
+        # Create full_name from first_name and last_name
+        full_name = f"{first_name} {last_name}".strip() if first_name or last_name else ''
+        
+        conn = get_db_connection()
+        if not conn:
+            flash('Database connection error!', 'error')
+            return redirect(url_for('users'))
+        
+        cur = conn.cursor()
+        
+        # Check if email already exists for another user
+        cur.execute("SELECT id FROM users WHERE email = %s AND id != %s", (email, user_id))
+        if cur.fetchone():
+            flash('Bu e-posta adresi başka bir kullanıcı tarafından kullanılıyor!', 'error')
+            return redirect(url_for('users'))
+        
+        # Update user
+        if password:
+            # Hash new password
+            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+            cur.execute("""
+                UPDATE users 
+                SET email = %s, first_name = %s, last_name = %s, full_name = %s,
+                    country = %s, region = %s, department = %s, position = %s,
+                    password = %s, is_active = %s
+                WHERE id = %s
+            """, (email, first_name, last_name, full_name, country, region, 
+                  department, position, hashed_password, is_active, user_id))
+        else:
+            cur.execute("""
+                UPDATE users 
+                SET email = %s, first_name = %s, last_name = %s, full_name = %s,
+                    country = %s, region = %s, department = %s, position = %s,
+                    is_active = %s
+                WHERE id = %s
+            """, (email, first_name, last_name, full_name, country, region, 
+                  department, position, is_active, user_id))
+        
+        conn.commit()
+        flash('Kullanıcı başarıyla güncellendi!', 'success')
+        
+    except psycopg2.Error as e:
+        app.logger.error(f"Edit user error: {e}")
+        flash('Kullanıcı güncellenirken hata oluştu!', 'error')
+    except Exception as e:
+        app.logger.error(f"Edit user error: {e}")
+        flash('Kullanıcı güncellenirken hata oluştu!', 'error')
+    finally:
+        if conn:
+            conn.close()
+    
+    return redirect(url_for('users'))
+
 @app.errorhandler(404)
 def not_found(error):
     return render_template('error.html', 
@@ -758,11 +1126,6 @@ def forbidden(error):
                          error_code=403, 
                          error_message='Erişim reddedildi'), 403
 
-@app.errorhandler(429)
-def rate_limit_exceeded(error):
-    return render_template('error.html', 
-                         error_code=429, 
-                         error_message='Çok fazla istek gönderildi. Lütfen bekleyin.'), 429
 
 if __name__ == '__main__':
     # Veritabanını başlat

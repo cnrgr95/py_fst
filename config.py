@@ -38,14 +38,10 @@ class Config:
     REMEMBER_COOKIE_SECURE = os.environ.get('REMEMBER_COOKIE_SECURE', 'False').lower() == 'true'
     REMEMBER_COOKIE_HTTPONLY = os.environ.get('REMEMBER_COOKIE_HTTPONLY', 'True').lower() == 'true'
     
-    # Rate Limiting
-    RATELIMIT_STORAGE_URL = os.environ.get('RATELIMIT_STORAGE_URL') or 'memory://'
-    RATELIMIT_DEFAULT = os.environ.get('RATELIMIT_DEFAULT') or '200 per day, 50 per hour'
-    
     # CSP Configuration
     CSP_DEFAULT_SRC = os.environ.get('CSP_DEFAULT_SRC') or "self"
     CSP_SCRIPT_SRC = os.environ.get('CSP_SCRIPT_SRC') or "self cdn.jsdelivr.net cdnjs.cloudflare.com"
-    CSP_STYLE_SRC = os.environ.get('CSP_STYLE_SRC') or "self cdn.jsdelivr.net cdnjs.cloudflare.com unsafe-inline"
+    CSP_STYLE_SRC = os.environ.get('CSP_STYLE_SRC') or "self cdn.jsdelivr.net cdnjs.cloudflare.com 'unsafe-inline'"
     CSP_IMG_SRC = os.environ.get('CSP_IMG_SRC') or "self data:"
     CSP_FONT_SRC = os.environ.get('CSP_FONT_SRC') or "self cdnjs.cloudflare.com fonts.gstatic.com fonts.googleapis.com"
     
